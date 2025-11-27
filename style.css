@@ -1,0 +1,140 @@
+/* style.css - 手繪日式小清新風 */
+/* 色票：粉綠 / 粉藍 / 奶油白 / 淡棕 */
+:root{
+  --mint:#DFF3EA;      /* 粉綠 */
+  --sky:#E8F4FF;       /* 粉藍 */
+  --cream:#FFF8E7;     /* 奶油白 */
+  --tan:#D6C1A3;       /* 淡棕 */
+  --ink:#2b2b2b;
+  --card-shadow: 0 6px 14px rgba(0,0,0,0.06);
+  --radius:18px;
+  font-family: 'Patrick Hand', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans CJK TC", sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* reset minimal */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background: linear-gradient(180deg,var(--cream),#fff);
+  color:var(--ink);
+  padding:18px;
+}
+
+/* header */
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:18px;
+}
+.logo{
+  font-size:1.6rem;
+  margin:0;
+}
+nav a{
+  text-decoration:none;
+  margin-left:10px;
+  padding:6px 10px;
+  border-radius:12px;
+  background:transparent;
+  border:1px dashed rgba(0,0,0,0.06);
+  font-size:0.95rem;
+}
+
+/* layout */
+.container{
+  max-width:900px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:14px;
+}
+
+/* card - 手繪風 */
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.8));
+  border-radius:var(--radius);
+  box-shadow:var(--card-shadow);
+  padding:18px;
+  border:2px solid rgba(0,0,0,0.03);
+  position:relative;
+  overflow:hidden;
+}
+
+/* 貼紙風小元素 */
+.sticker{
+  background:linear-gradient(180deg,var(--mint),var(--sky));
+  transform:rotate(-1deg);
+  border:2px dashed rgba(0,0,0,0.06);
+}
+
+/* 手繪按鈕風格 */
+.btn{
+  display:inline-block;
+  padding:8px 14px;
+  border-radius:12px;
+  background:var(--tan);
+  color:var(--ink);
+  text-decoration:none;
+  font-weight:700;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.06);
+  border-bottom:4px solid rgba(0,0,0,0.06);
+  cursor:pointer;
+}
+.btn.outline{
+  background:transparent;
+  border:2px dashed rgba(0,0,0,0.08);
+  box-shadow:none;
+  font-weight:600;
+}
+.buttons{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;}
+
+/* form */
+.searchRow{display:flex;gap:8px;margin-top:8px}
+input[type="text"], input, textarea{
+  padding:10px;
+  border-radius:10px;
+  border:2px dashed rgba(0,0,0,0.06);
+  background:transparent;
+  outline:none;
+  font-size:1rem;
+  flex:1;
+}
+
+/* result */
+.hidden{display:none}
+.resultHeader{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.visitedToggle{display:flex;align-items:center;gap:8px;font-size:0.95rem}
+.visaInfo p{margin:8px 0;line-height:1.4}
+
+/* visited list */
+.visitedList{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.visitedItem{
+  padding:8px 10px;
+  border-radius:10px;
+  background:linear-gradient(180deg,#fff,#fff8f0);
+  border:1px solid rgba(0,0,0,0.04);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+}
+
+/* progress */
+.progressWrap{display:flex;align-items:center;gap:10px;margin-top:8px}
+.progressBar{width:100%;height:18px;background:linear-gradient(180deg,#fff,#fff);border-radius:10px;border:1px dashed rgba(0,0,0,0.06);overflow:hidden}
+.progressFill{height:100%;width:0%;background:linear-gradient(90deg,var(--mint),var(--sky));transition:width 400ms ease}
+
+/* footer */
+.foot{text-align:center;margin-top:20px;color:rgba(0,0,0,0.5)}
+
+/* 小謬誤手繪線條（裝飾） */
+.card:after{
+  content:"";
+  width:80px;height:80px;
+  position:absolute;
+  right:-30px;top:-20px;
+  background:radial-gradient(circle at 30% 30%, rgba(0,0,0,0.02), transparent 30%);
+  transform:rotate(-12deg);
+}

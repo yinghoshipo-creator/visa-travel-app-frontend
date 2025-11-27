@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>簽證查詢</title>
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1 class="logo">簽證查詢 ✦</h1>
+    <nav>
+      <a href="index.html">首頁</a>
+      <a href="visa.html">簽證查詢</a>
+      <a href="visited.html">造訪紀錄</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <label for="countryInput">輸入國家名稱（例：Japan / 日本）</label>
+      <div class="searchRow">
+        <input id="countryInput" placeholder="輸入國家名稱…" />
+        <button id="searchBtn" class="btn">查詢</button>
+      </div>
+      <small id="hint">提示：可輸入英文或中文名稱。</small>
+    </section>
+
+    <section id="result" class="card hidden">
+      <div class="resultHeader">
+        <h2 id="countryName">國家名稱</h2>
+        <label class="visitedToggle">
+          <input type="checkbox" id="visitedCheckbox" />
+          我已到過
+        </label>
+      </div>
+
+      <div class="visaInfo">
+        <p><strong>是否需要簽證：</strong><span id="visaRequirement"></span></p>
+        <p><strong>停留天數：</strong><span id="stayDays"></span></p>
+        <p><strong>申請流程：</strong><span id="process"></span></p>
+        <p><strong>所需文件：</strong><span id="documents"></span></p>
+        <p><strong>申請費用：</strong><span id="fee"></span></p>
+        <p><strong>官方連結：</strong><a id="officialLink" href="#" target="_blank">官方 / 更多資訊</a></p>
+        <p class="source"><em>資料來源：示範假資料或公開 API</em></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <small>© 旅行手繪簿</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

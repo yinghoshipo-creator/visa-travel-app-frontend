@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>我的造訪紀錄</title>
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1 class="logo">我的造訪紀錄 ✦</h1>
+    <nav>
+      <a href="index.html">首頁</a>
+      <a href="visa.html">簽證查詢</a>
+      <a href="visited.html">造訪紀錄</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>已造訪國家數量： <span id="visitedCount">0</span> / 195</h2>
+      <div class="progressWrap">
+        <div id="progressBar" class="progressBar"><div id="progressFill" class="progressFill"></div></div>
+        <small id="percentText">0%</small>
+      </div>
+      <div id="visitedList" class="visitedList"></div>
+    </section>
+
+    <section class="card sticker">
+      <h4>提示</h4>
+      <p>你在簽證查詢頁面勾選「我已到過」時，此處會自動更新。</p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <small>© 旅行手繪簿</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
