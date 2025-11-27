@@ -5,7 +5,7 @@
 */
 
 /* ===== 設定 ===== */
-const API_BASE = "https://YOUR_ZEABUR_DOMAIN_OR_LOCALHOST:3000"; 
+const API_BASE = "https://visa-travel-app.zeabur.app/"; 
 // 本機測試時可改為 http://localhost:3000
 
 /* ===== 共用幫手函式 ===== */
