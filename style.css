@@ -1,412 +1,56 @@
-/* --- Base Styles and Typography --- */
+/* style.css */
+/* 這是 Mobile First 樣式，主要針對小螢幕設計。 */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
 body {
-    font-family: '微軟正黑體', 'Helvetica Neue', Arial, sans-serif; /* 確保中文可讀性 */
-    background-color: #f7f3f0; /* 淺米白/紙張背景 */
-    color: #333;
-    line-height: 1.6;
-    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6; /* 淺灰色背景 */
+}
+
+/* 確保所有容器在小螢幕上都是全寬 */
+.container {
     padding: 0;
 }
 
-h1, h2, h3, h4, .logo {
-    font-family: 'Patrick Hand', cursive; /* 手寫風字體僅用於標題 */
-    color: #4a6c66; /* 小清新綠色 */
-    font-weight: normal;
+/* RWD 調整: 在中型螢幕 (md) 以上才設定最大寬度和居中 */
+@media (min-width: 768px) {
+    .container {
+        max-width: 1024px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
 }
 
-.logo {
-    font-size: 1.8em;
-    padding: 0 10px;
+/* 導覽列風格 - 讓它在手機上佔滿寬度 */
+.navbar {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Layout and Header --- */
-.container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 0 20px;
+.nav-link {
+    transition: all 0.2s ease-in-out;
 }
 
-.top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* 輕微陰影 */
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
 }
 
-nav a {
-    color: #666;
-    text-decoration: none;
-    padding: 5px 10px;
-    transition: color 0.3s;
-}
-
-nav a:hover {
-    color: #799a93;
-}
-
-/* --- Card Style (The Paper Look) --- */
-.card {
-    background-color: #ffffff; /* 卡片背景 */
-    padding: 25px;
-    margin-bottom: 25px;
-    border: 2px solid #ddd; /* 淺色邊框 */
-    border-radius: 10px;
-    box-shadow: 4px 4px 0px 0px #e0e0e0; /* 模擬手繪感的陰影 */
-    transition: box-shadow 0.3s, transform 0.3s;
-}
-
-.card:hover {
-    box-shadow: 6px 6px 0px 0px #d0d0d0; /* 互動時加深陰影 */
-}
-
-/* --- Input and Search Bar --- */
-.searchRow {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-#countryInput {
-    flex-grow: 1;
-    padding: 10px 15px;
-    border: 2px solid #a6c4c0; /* 清新綠邊框 */
-    border-radius: 6px;
-    font-size: 1em;
-    transition: border-color 0.3s;
-}
-
-#countryInput:focus {
-    outline: none;
-    border-color: #4a6c66;
-    box-shadow: 0 0 0 3px rgba(74, 108, 102, 0.2); /* 柔和聚焦陰影 */
-}
-
-#hint {
-    display: block;
-    margin-top: 5px;
-    color: #999;
-    font-size: 0.85em;
-}
-
-/* --- Button Styling (Sticker Look) --- */
-.btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    font-size: 1em;
-    font-family: 'Patrick Hand', cursive;
-    cursor: pointer;
-    text-decoration: none;
-    text-align: center;
+/* 簽證卡片 Mobile 優先排版 */
+.visa-card {
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.btn:active {
-    /* 點擊時下沉效果，模擬貼紙被按下去 */
-    transform: translateY(2px); 
-    box-shadow: none !important; 
+.visa-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-/* Primary Button for Search */
-#searchBtn {
-    background-color: #f79f79; /* 暖橙色 */
-    color: white;
-    box-shadow: 0 3px 0 #e48965; /* 模擬貼紙厚度 */
+/* 確保按鈕在手機上有良好的點擊區塊 */
+.btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 600;
 }
-
-#searchBtn:hover {
-    background-color: #e48965;
-    box-shadow: 0 3px 0 #cc7858;
-}
-
-/* --- Result Area (UX/UI Focus) --- */
-#result {
-    /* 初始是 hidden，透過 JS 移除 class */
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-}
-
-#result.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.resultHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px dashed #ddd; /* 手繪風格虛線 */
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-}
-
-#countryName {
-    margin: 0;
-    color: #4a6c66;
-    font-size: 2em;
-}
-
-/* Visited Toggle (Checkbox as a Sticker) */
-.visitedToggle {
-    font-family: 'Patrick Hand', cursive;
-    color: #555;
-    font-size: 1.2em;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-}
-
-.visaInfo strong {
-    color: #4a6c66; /* 標籤文字使用主題色 */
-}
-
-.visaInfo p {
-    margin: 8px 0;
-    padding-left: 15px;
-    position: relative;
-}
-
-.visaInfo p::before {
-    content: '‣'; /* 項目符號 */
-    position: absolute;
-    left: 0;
-    color: #f79f79; /* 暖橙色 */
-}
-
-.source {
-    font-size: 0.8em;
-    color: #aaa;
-    margin-top: 20px;
-    border-top: 1px dotted #eee;
-    padding-top: 10px;
-}
-
-/* --- Error and Loading States (UX Essential) --- */
-.message-card {
-    background-color: #fff8e1; /* 柔和黃色背景 */
-    color: #c08401;
-    border: 2px dashed #ffe082;
-    padding: 15px;
-    margin-top: 20px;
-    border-radius: 8px;
-    text-align: center;
-}
-
-/* --- Footer --- */
-.foot {
-    text-align: center;
-    padding: 15px 0;
-    color: #999;
-    font-size: 0.85em;
-}
-
-/* --- Mobile Responsiveness --- */
-@media (max-width: 600px) {
-    .top {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    nav {
-        margin-top: 10px;
-    }
-    .searchRow {
-        flex-direction: column;
-    }
-    #searchBtn {
-        width: 100%;
-    }
-}
-
-/* --- Visited Page Specific Styles --- */
-
-.country-list {
-    list-style: none;
-    padding: 0;
-    margin-top: 20px;
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* RWD 網格佈局 */
-}
-
-.country-list li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #fcfcfc;
-    transition: background-color 0.2s, transform 0.2s;
-    font-family: 'Patrick Hand', cursive; /* 國家名稱用手寫風 */
-    font-size: 1.1em;
-    color: #333;
-}
-
-.country-list li:hover {
-    background-color: #e6f3f1; /* 鼠標懸停時的淺綠色 */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.remove-btn {
-    background: none;
-    border: none;
-    color: #f79f79; /* 暖橙色刪除圖示 */
-    cursor: pointer;
-    font-size: 1em;
-    padding: 5px;
-    transition: color 0.2s;
-}
-
-.remove-btn:hover {
-    color: #e48965;
-}
-
-.summary {
-    font-size: 1.2em;
-    color: #4a6c66; /* 主題色 */
-    border-top: 1px dotted #ddd;
-    padding-top: 10px;
-}
-
-.small-btn {
-    padding: 5px 10px;
-    font-size: 0.9em;
-}
-
-.clear-btn {
-    background-color: #dc3545; /* 警告紅色 */
-    color: white;
-    box-shadow: 0 3px 0 #bd2130;
-}
-
-.clear-btn:hover {
-    background-color: #bd2130;
-    box-shadow: 0 3px 0 #9f1c29;
-}
-
-/* 確保 empty message 樣式應用 */
-#emptyMessage a {
-    color: #4a6c66;
-    text-decoration: underline;
-}
-
-/* RWD 調整 */
-@media (max-width: 600px) {
-    .country-list {
-        grid-template-columns: 1fr; /* 手機上單欄顯示 */
-    }
-}
-/* --- Index Page Specific Styles (UX/UI Enhancement) --- */
-
-/* 核心區塊樣式調整 */
-.hero {
-    text-align: center;
-    padding: 40px 20px;
-}
-
-.hero-title {
-    font-size: 2.5em;
-    margin-bottom: 5px;
-    color: #4a6c66; /* 主題色 */
-}
-
-.hero-subtitle {
-    font-size: 1.1em;
-    color: #666;
-    margin-bottom: 25px;
-}
-
-/* 按鈕容器 */
-.buttons {
-    display: flex;
-    flex-direction: column; /* 預設垂直堆疊 (手機優先) */
-    gap: 15px;
-    margin-top: 30px;
-}
-
-/* 主要按鈕 (CTA 強化) */
-.primary-btn {
-    background-color: #f79f79; /* 暖橙色 */
-    color: white;
-    box-shadow: 0 4px 0 #e48965; /* 更深的陰影 */
-}
-
-.primary-btn:hover {
-    background-color: #e48965;
-    box-shadow: 0 4px 0 #cc7858;
-}
-
-/* 次要按鈕 */
-.secondary-btn {
-    background-color: #fff;
-    color: #4a6c66; /* 邊框和文字使用主題色 */
-    border: 2px solid #4a6c66;
-    box-shadow: 0 4px 0 #a6c4c0;
-}
-
-.secondary-btn:hover {
-    background-color: #e6f3f1;
-    box-shadow: 0 4px 0 #799a93;
-}
-
-.large-btn {
-    padding: 15px 30px;
-    font-size: 1.1em;
-    font-weight: bold;
-}
-
-.large-btn i {
-    margin-right: 8px; /* 圖示與文字間隔 */
-}
-
-/* 網格佈局 (功能與目標區塊並排) */
-.info-grid {
-    display: grid;
-    grid-template-columns: 1fr; /* 預設單欄 */
-    gap: 20px;
-    margin-top: 20px;
-}
-
-@media (min-width: 768px) {
-    .buttons {
-        flex-direction: row; /* 寬螢幕時水平並排 */
-        justify-content: center;
-    }
-    .info-grid {
-        grid-template-columns: 1fr 1fr; /* 寬螢幕時兩欄並排 */
-    }
-}
-
-/* 列表樣式美化 */
-.bullet-list {
-    list-style: none; /* 移除預設符號 */
-    padding: 0;
-}
-
-.bullet-list li {
-    padding-left: 1.5em; /* 留出空間給自定義符號 */
-    position: relative;
-    margin-bottom: 10px;
-    color: #555;
-}
-
-.bullet-list li::before {
-    content: '★'; /* 使用星星或特定符號作為項目符號 */
-    position: absolute;
-    left: 0;
-    color: #f79f79; /* 暖橙色 */
-    font-size: 0.8em;
-    top: 3px;
-}
-
-/* 卡片標題圖示 */
-.feature-card h3 i, .goal-card h3 i {
-    margin-right: 10px;
-    color: #4a6c66;
-}
-
-/* 確保按鈕被點擊時有下沉效果 (在之前的 style.css 中已定義 .btn:active) */

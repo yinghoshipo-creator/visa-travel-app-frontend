@@ -1,61 +1,152 @@
-<!doctype html>
-<html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>旅遊小本本 — 簽證查詢</title>
-    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台灣護照 簽證待遇</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 設定 Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-green': '#10b981', // Emerald 500 (Matches the aesthetic of your screenshot)
+                        'secondary-green': '#059669', // Emerald 600
+                        'light-blue-bg': '#f7f9fb',
+                        'light-border': '#e5e7eb',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 確保字體在不同系統下的一致性 */
+        body {
+            font-family: 'Inter', 'Noto Sans TC', 'Microsoft JhengHei', 'sans-serif';
+            background-color: #f7f9fb;
+        }
+        /* 突出顯示篩選區塊標題 */
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            margin-right: 8px;
+            transform: translateY(-1px);
+        }
+    </style>
 </head>
-<body>
-    <header class="top">
-        <h1 class="logo">簽證查詢 ✦</h1>
-        <nav>
-            <a href="index.html">首頁</a>
-            <a href="visa.html">簽證查詢</a>
-            <a href="visited.html">造訪紀錄</a>
-        </nav>
-    </header>
+<body class="p-4 md:p-8">
 
-    <main class="container">
-        <section class="card">
-            <label for="countryInput">輸入國家名稱（例：Japan / 日本）</label>
-            <div class="searchRow">
-                <input id="countryInput" placeholder="輸入國家名稱…" />
-                <button id="searchBtn" class="btn">查詢</button>
+    <div class="max-w-7xl mx-auto">
+        
+        <!-- 導航列 (簡易模擬，如您的截圖所示) -->
+        <nav class="flex justify-end space-x-4 mb-8 text-sm font-medium">
+            <button class="text-gray-600 hover:text-primary-green">簽證資訊</button>
+            <button class="text-gray-600 hover:text-primary-green">我的足跡</button>
+            <button class="text-gray-600 hover:text-primary-green">English</button>
+        </nav>
+
+        <!-- 標題區 -->
+        <header class="text-center mb-10 p-6">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-gray-800 leading-tight">
+                台灣護照 簽證待遇
+            </h1>
+            <p class="mt-2 text-lg text-gray-500">
+                查核中華民國（台灣）護照持有者前往全球國家/地區的簽證要求及規定。
+            </p>
+        </header>
+
+        <!-- 篩選與查詢區塊 (白色卡片) -->
+        <section class="mb-10 p-6 md:p-8 bg-white rounded-xl shadow-lg border border-light-border">
+            
+            <h2 class="section-title text-lg font-bold text-gray-700 mb-6">篩選與查詢</h2>
+
+            <!-- 1. 搜尋國家 (全寬輸入框) -->
+            <div class="mb-6">
+                <label for="searchInput" class="block text-sm font-medium text-gray-500 mb-2">輸入國家名稱或英文拼音縮寫...</label>
+                <div class="flex">
+                    <input type="text" id="searchInput" placeholder="輸入國家名稱..." 
+                           class="flex-grow p-3 border border-gray-300 rounded-l-lg focus:ring-primary-green focus:border-primary-green shadow-sm text-gray-700">
+                    <button id="searchButton" class="px-4 py-2 bg-primary-green text-white font-semibold rounded-r-lg hover:bg-secondary-green transition duration-150">
+                        查詢
+                    </button>
+                </div>
             </div>
-            <small id="hint">提示：可輸入英文或中文名稱。</small>
+
+            <!-- 2. 下拉篩選 (三欄佈局，模擬您的截圖) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                <!-- 簽證類型篩選 -->
+                <div>
+                    <select id="visaFilter" 
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-green focus:border-primary-green shadow-sm bg-white text-gray-700 appearance-none select-arrow-icon">
+                        <option value="All">落地簽證 (篩選)</option>
+                        <option value="Visa-Free">免簽證</option>
+                        <option value="Visa-on-Arrival">落地簽證</option>
+                        <option value="e-Visa">電子簽證/eTA</option>
+                        <option value="Required">須辦理簽證</option>
+                    </select>
+                </div>
+                
+                <!-- 地區篩選 -->
+                <div>
+                    <select id="categoryFilter" 
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-green focus:border-primary-green shadow-sm bg-white text-gray-700 appearance-none select-arrow-icon">
+                        <option value="All">所有地區 (篩選)</option>
+                        <option value="亞太地區">亞太地區</option>
+                        <option value="美洲">美洲</option>
+                        <option value="歐洲">歐洲</option>
+                        <option value="中東">中東</option>
+                        <option value="非洲">非洲</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+
+                <!-- 排序選項 -->
+                <div>
+                    <select id="sortOption" 
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-green focus:border-primary-green shadow-sm bg-white text-gray-700 appearance-none select-arrow-icon">
+                        <option value="name_asc">國家名稱 (A-Z)</option>
+                        <option value="days_desc">停留天數 (多到少)</option>
+                        <option value="days_asc">停留天數 (少到多)</option>
+                    </select>
+                </div>
+            </div>
         </section>
 
-        <div id="messageArea">
-            <div class="message-card">請在上方輸入國家名稱並點擊查詢。</div>
+        <!-- 國家列表標題 -->
+        <h2 class="section-title text-xl font-bold text-gray-700 mb-6">國家列表</h2>
+
+
+        <!-- 數據載入中/無結果 訊息 -->
+        <div id="loadingMessage" class="text-center p-5 bg-light-blue-bg text-gray-500 rounded-lg shadow-inner mb-6 font-semibold border border-light-border">
+            正在載入簽證資料...
         </div>
 
-        <section id="result" class="card">
-            <div class="resultHeader">
-                <h2 id="countryName">國家名稱</h2>
-                <label class="visitedToggle">
-                    <input type="checkbox" id="visitedCheckbox" />
-                    我已到過
-                </label>
-            </div>
+        <div id="noResults" class="hidden text-center p-10 bg-red-50 text-red-700 rounded-xl shadow-md mb-6 border border-red-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            <p class="text-lg font-semibold">找不到符合條件的國家。</p>
+            <p>請嘗試調整您的篩選或搜尋條件。</p>
+        </div>
 
-            <div class="visaInfo">
-                <p><strong>是否需要簽證：</strong><span id="visaRequirement"></span></p>
-                <p><strong>停留天數：</strong><span id="stayDays"></span></p>
-                <p><strong>申請流程：</strong><span id="process"></span></p>
-                <p><strong>所需文件：</strong><span id="documents"></span></p>
-                <p><strong>申請費用：</strong><span id="fee"></span></p>
-                <p><strong>官方連結：</strong><a id="officialLink" href="#" target="_blank">官方 / 更多資訊</a></p>
-                <p class="source"><em>資料來源：示範假資料或公開 API</em></p>
-            </div>
+        <!-- 簽證列表區 -->
+        <section id="visaList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- 國家卡片將由 script.js 渲染在此處 -->
         </section>
-    </main>
 
-    <footer class="foot">
-        <small>© 旅行手繪簿</small>
-    </footer>
+    </div>
 
-    <script src="script.js"></script>
+    <!-- 載入 JavaScript 邏輯，確保在所有 DOM 元素之後載入 -->
+    <!-- 注意: 您的 script.js 必須包含我在前幾次對話中提供的 API 呼叫和渲染邏輯 -->
+    <script type="text/javascript" src="./script.js"></script>
+
 </body>
 </html>
