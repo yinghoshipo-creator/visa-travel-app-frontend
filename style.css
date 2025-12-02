@@ -1,140 +1,302 @@
-/* style.css - 手繪日式小清新風 */
-/* 色票：粉綠 / 粉藍 / 奶油白 / 淡棕 */
-:root{
-  --mint:#DFF3EA;      /* 粉綠 */
-  --sky:#E8F4FF;       /* 粉藍 */
-  --cream:#FFF8E7;     /* 奶油白 */
-  --tan:#D6C1A3;       /* 淡棕 */
-  --ink:#2b2b2b;
-  --card-shadow: 0 6px 14px rgba(0,0,0,0.06);
-  --radius:18px;
-  font-family: 'Patrick Hand', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans CJK TC", sans-serif;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+/* --- Base Styles and Typography --- */
+body {
+    font-family: '微軟正黑體', 'Helvetica Neue', Arial, sans-serif; /* 確保中文可讀性 */
+    background-color: #f7f3f0; /* 淺米白/紙張背景 */
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
 }
 
-/* reset minimal */
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  background: linear-gradient(180deg,var(--cream),#fff);
-  color:var(--ink);
-  padding:18px;
+h1, h2, h3, h4, .logo {
+    font-family: 'Patrick Hand', cursive; /* 手寫風字體僅用於標題 */
+    color: #4a6c66; /* 小清新綠色 */
+    font-weight: normal;
 }
 
-/* header */
-.top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  margin-bottom:18px;
-}
-.logo{
-  font-size:1.6rem;
-  margin:0;
-}
-nav a{
-  text-decoration:none;
-  margin-left:10px;
-  padding:6px 10px;
-  border-radius:12px;
-  background:transparent;
-  border:1px dashed rgba(0,0,0,0.06);
-  font-size:0.95rem;
+.logo {
+    font-size: 1.8em;
+    padding: 0 10px;
 }
 
-/* layout */
-.container{
-  max-width:900px;
-  margin:0 auto;
-  display:grid;
-  grid-template-columns: 1fr;
-  gap:14px;
+/* --- Layout and Header --- */
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 20px;
 }
 
-/* card - 手繪風 */
-.card{
-  background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.8));
-  border-radius:var(--radius);
-  box-shadow:var(--card-shadow);
-  padding:18px;
-  border:2px solid rgba(0,0,0,0.03);
-  position:relative;
-  overflow:hidden;
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* 輕微陰影 */
 }
 
-/* 貼紙風小元素 */
-.sticker{
-  background:linear-gradient(180deg,var(--mint),var(--sky));
-  transform:rotate(-1deg);
-  border:2px dashed rgba(0,0,0,0.06);
+nav a {
+    color: #666;
+    text-decoration: none;
+    padding: 5px 10px;
+    transition: color 0.3s;
 }
 
-/* 手繪按鈕風格 */
-.btn{
-  display:inline-block;
-  padding:8px 14px;
-  border-radius:12px;
-  background:var(--tan);
-  color:var(--ink);
-  text-decoration:none;
-  font-weight:700;
-  box-shadow: 0 6px 0 rgba(0,0,0,0.06);
-  border-bottom:4px solid rgba(0,0,0,0.06);
-  cursor:pointer;
-}
-.btn.outline{
-  background:transparent;
-  border:2px dashed rgba(0,0,0,0.08);
-  box-shadow:none;
-  font-weight:600;
-}
-.buttons{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;}
-
-/* form */
-.searchRow{display:flex;gap:8px;margin-top:8px}
-input[type="text"], input, textarea{
-  padding:10px;
-  border-radius:10px;
-  border:2px dashed rgba(0,0,0,0.06);
-  background:transparent;
-  outline:none;
-  font-size:1rem;
-  flex:1;
+nav a:hover {
+    color: #799a93;
 }
 
-/* result */
-.hidden{display:none}
-.resultHeader{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.visitedToggle{display:flex;align-items:center;gap:8px;font-size:0.95rem}
-.visaInfo p{margin:8px 0;line-height:1.4}
-
-/* visited list */
-.visitedList{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.visitedItem{
-  padding:8px 10px;
-  border-radius:10px;
-  background:linear-gradient(180deg,#fff,#fff8f0);
-  border:1px solid rgba(0,0,0,0.04);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+/* --- Card Style (The Paper Look) --- */
+.card {
+    background-color: #ffffff; /* 卡片背景 */
+    padding: 25px;
+    margin-bottom: 25px;
+    border: 2px solid #ddd; /* 淺色邊框 */
+    border-radius: 10px;
+    box-shadow: 4px 4px 0px 0px #e0e0e0; /* 模擬手繪感的陰影 */
+    transition: box-shadow 0.3s, transform 0.3s;
 }
 
-/* progress */
-.progressWrap{display:flex;align-items:center;gap:10px;margin-top:8px}
-.progressBar{width:100%;height:18px;background:linear-gradient(180deg,#fff,#fff);border-radius:10px;border:1px dashed rgba(0,0,0,0.06);overflow:hidden}
-.progressFill{height:100%;width:0%;background:linear-gradient(90deg,var(--mint),var(--sky));transition:width 400ms ease}
+.card:hover {
+    box-shadow: 6px 6px 0px 0px #d0d0d0; /* 互動時加深陰影 */
+}
 
-/* footer */
-.foot{text-align:center;margin-top:20px;color:rgba(0,0,0,0.5)}
+/* --- Input and Search Bar --- */
+.searchRow {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
 
-/* 小謬誤手繪線條（裝飾） */
-.card:after{
-  content:"";
-  width:80px;height:80px;
-  position:absolute;
-  right:-30px;top:-20px;
-  background:radial-gradient(circle at 30% 30%, rgba(0,0,0,0.02), transparent 30%);
-  transform:rotate(-12deg);
+#countryInput {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 2px solid #a6c4c0; /* 清新綠邊框 */
+    border-radius: 6px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+#countryInput:focus {
+    outline: none;
+    border-color: #4a6c66;
+    box-shadow: 0 0 0 3px rgba(74, 108, 102, 0.2); /* 柔和聚焦陰影 */
+}
+
+#hint {
+    display: block;
+    margin-top: 5px;
+    color: #999;
+    font-size: 0.85em;
+}
+
+/* --- Button Styling (Sticker Look) --- */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    font-family: 'Patrick Hand', cursive;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn:active {
+    /* 點擊時下沉效果，模擬貼紙被按下去 */
+    transform: translateY(2px); 
+    box-shadow: none !important; 
+}
+
+/* Primary Button for Search */
+#searchBtn {
+    background-color: #f79f79; /* 暖橙色 */
+    color: white;
+    box-shadow: 0 3px 0 #e48965; /* 模擬貼紙厚度 */
+}
+
+#searchBtn:hover {
+    background-color: #e48965;
+    box-shadow: 0 3px 0 #cc7858;
+}
+
+/* --- Result Area (UX/UI Focus) --- */
+#result {
+    /* 初始是 hidden，透過 JS 移除 class */
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+#result.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.resultHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px dashed #ddd; /* 手繪風格虛線 */
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+#countryName {
+    margin: 0;
+    color: #4a6c66;
+    font-size: 2em;
+}
+
+/* Visited Toggle (Checkbox as a Sticker) */
+.visitedToggle {
+    font-family: 'Patrick Hand', cursive;
+    color: #555;
+    font-size: 1.2em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.visaInfo strong {
+    color: #4a6c66; /* 標籤文字使用主題色 */
+}
+
+.visaInfo p {
+    margin: 8px 0;
+    padding-left: 15px;
+    position: relative;
+}
+
+.visaInfo p::before {
+    content: '‣'; /* 項目符號 */
+    position: absolute;
+    left: 0;
+    color: #f79f79; /* 暖橙色 */
+}
+
+.source {
+    font-size: 0.8em;
+    color: #aaa;
+    margin-top: 20px;
+    border-top: 1px dotted #eee;
+    padding-top: 10px;
+}
+
+/* --- Error and Loading States (UX Essential) --- */
+.message-card {
+    background-color: #fff8e1; /* 柔和黃色背景 */
+    color: #c08401;
+    border: 2px dashed #ffe082;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* --- Footer --- */
+.foot {
+    text-align: center;
+    padding: 15px 0;
+    color: #999;
+    font-size: 0.85em;
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 600px) {
+    .top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    nav {
+        margin-top: 10px;
+    }
+    .searchRow {
+        flex-direction: column;
+    }
+    #searchBtn {
+        width: 100%;
+    }
+}
+
+/* --- Visited Page Specific Styles --- */
+
+.country-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* RWD 網格佈局 */
+}
+
+.country-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fcfcfc;
+    transition: background-color 0.2s, transform 0.2s;
+    font-family: 'Patrick Hand', cursive; /* 國家名稱用手寫風 */
+    font-size: 1.1em;
+    color: #333;
+}
+
+.country-list li:hover {
+    background-color: #e6f3f1; /* 鼠標懸停時的淺綠色 */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.remove-btn {
+    background: none;
+    border: none;
+    color: #f79f79; /* 暖橙色刪除圖示 */
+    cursor: pointer;
+    font-size: 1em;
+    padding: 5px;
+    transition: color 0.2s;
+}
+
+.remove-btn:hover {
+    color: #e48965;
+}
+
+.summary {
+    font-size: 1.2em;
+    color: #4a6c66; /* 主題色 */
+    border-top: 1px dotted #ddd;
+    padding-top: 10px;
+}
+
+.small-btn {
+    padding: 5px 10px;
+    font-size: 0.9em;
+}
+
+.clear-btn {
+    background-color: #dc3545; /* 警告紅色 */
+    color: white;
+    box-shadow: 0 3px 0 #bd2130;
+}
+
+.clear-btn:hover {
+    background-color: #bd2130;
+    box-shadow: 0 3px 0 #9f1c29;
+}
+
+/* 確保 empty message 樣式應用 */
+#emptyMessage a {
+    color: #4a6c66;
+    text-decoration: underline;
+}
+
+/* RWD 調整 */
+@media (max-width: 600px) {
+    .country-list {
+        grid-template-columns: 1fr; /* 手機上單欄顯示 */
+    }
 }

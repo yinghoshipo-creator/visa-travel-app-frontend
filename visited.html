@@ -1,42 +1,49 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>我的造訪紀錄</title>
-  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>旅遊小本本 — 造訪紀錄</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-  <header class="top">
-    <h1 class="logo">我的造訪紀錄 ✦</h1>
-    <nav>
-      <a href="index.html">首頁</a>
-      <a href="visa.html">簽證查詢</a>
-      <a href="visited.html">造訪紀錄</a>
-    </nav>
-  </header>
+    <header class="top">
+        <h1 class="logo">造訪紀錄 ✦</h1>
+        <nav>
+            <a href="index.html">首頁</a>
+            <a href="visa.html">簽證查詢</a>
+            <a href="visited.html">造訪紀錄</a>
+        </nav>
+    </header>
 
-  <main class="container">
-    <section class="card">
-      <h2>已造訪國家數量： <span id="visitedCount">0</span> / 195</h2>
-      <div class="progressWrap">
-        <div id="progressBar" class="progressBar"><div id="progressFill" class="progressFill"></div></div>
-        <small id="percentText">0%</small>
-      </div>
-      <div id="visitedList" class="visitedList"></div>
-    </section>
+    <main class="container">
+        <section class="card">
+            <div class="resultHeader">
+                <h2>🌍 我已造訪的國家列表</h2>
+                <button id="clearBtn" class="btn small-btn clear-btn">清空紀錄</button>
+            </div>
+            
+            <p class="summary">
+                總共造訪：<strong id="countryCount">0</strong> 國
+            </p>
 
-    <section class="card sticker">
-      <h4>提示</h4>
-      <p>你在簽證查詢頁面勾選「我已到過」時，此處會自動更新。</p>
-    </section>
-  </main>
+            <ul id="visitedList" class="country-list">
+                </ul>
+            
+            <div id="emptyMessage" class="message-card">
+                <p>還沒有紀錄喔！快去 <a href="visa.html">簽證查詢頁面</a> 勾選您到過的國家吧！</p>
+            </div>
 
-  <footer class="foot">
-    <small>© 旅行手繪簿</small>
-  </footer>
+        </section>
+        
+    </main>
 
-  <script src="script.js"></script>
+    <footer class="foot">
+        <small>© 旅行手繪簿</small>
+    </footer>
+
+    <script src="script-visited.js"></script>
 </body>
 </html>

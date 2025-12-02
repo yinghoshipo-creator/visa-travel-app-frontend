@@ -1,131 +1,144 @@
-/* script.js - 前端邏輯 (純 Vanilla JS)
-   簡單說明：
-   - API_BASE: 改成你部署在 Zeabur 的後端位置，例如 "https://your-zeabur-app.fly.dev"
-   - LocalStorage: key = "visitedCountries" (存成陣列的 JSON 字串)
-*/
+// --- 配置區 ---
+// 請根據您的 Zeabur 部署端點修改此變數！
+const API_BASE_URL = 'https://visa-travel-app.zeabur.app'; // 替換成您的後端 URL
 
-/* ===== 設定 ===== */
-const API_BASE = "https://visa-travel-app.zeabur.app"; 
-// 本機測試時可改為 http://localhost:3000
+// --- DOM 元素選取 ---
+const countryInput = document.getElementById('countryInput');
+const searchBtn = document.getElementById('searchBtn');
+const messageArea = document.getElementById('messageArea');
+const resultSection = document.getElementById('result');
 
-/* ===== 共用幫手函式 ===== */
-// 取得訪問紀錄陣列（LocalStorage）
-function loadVisited(){
-  const raw = localStorage.getItem("visitedCountries");
-  try{
-    return raw ? JSON.parse(raw) : [];
-  }catch(e){
-    return [];
-  }
+// 結果顯示的 Span 元素
+const elements = {
+    countryName: document.getElementById('countryName'),
+    visaRequirement: document.getElementById('visaRequirement'),
+    stayDays: document.getElementById('stayDays'),
+    process: document.getElementById('process'),
+    documents: document.getElementById('documents'),
+    fee: document.getElementById('fee'),
+    officialLink: document.getElementById('officialLink'),
+    visitedCheckbox: document.getElementById('visitedCheckbox')
+};
+
+// --- 狀態切換 UX 邏輯 ---
+
+/**
+ * 顯示載入中的訊息，並隱藏結果區
+ */
+function showLoading() {
+    messageArea.innerHTML = '<div class="message-card">⏳ 資料查詢中... 請稍候。</div>';
+    resultSection.classList.remove('visible'); // 移除顯示類別 (CSS 會處理平滑隱藏)
 }
-// 儲存訪問紀錄
-function saveVisited(arr){
-  localStorage.setItem("visitedCountries", JSON.stringify(arr));
+
+/**
+ * 顯示錯誤訊息
+ * @param {string} message - 錯誤內容
+ */
+function showError(message) {
+    messageArea.innerHTML = `<div class="message-card error-card">⚠️ ${message}</div>`;
+    resultSection.classList.remove('visible');
 }
 
-/* ===== 首页 / 初始化 ===== */
-document.addEventListener("DOMContentLoaded", () => {
-  // 如果在每個頁面都引入，本段保守，不會出錯
-  initVisaPage();
-  initVisitedPage();
+/**
+ * 清除所有訊息區，準備顯示結果
+ */
+function clearMessage() {
+    messageArea.innerHTML = '';
+}
+
+/**
+ * 渲染簽證資料到頁面
+ * @param {object} data - 簽證資料物件
+ */
+function renderVisaData(data) {
+    // 渲染資料
+    elements.countryName.textContent = data.countryName || 'N/A';
+    elements.visaRequirement.textContent = data.requirement || 'N/A';
+    elements.stayDays.textContent = data.days || 'N/A';
+    elements.process.textContent = data.process || 'N/A';
+    elements.documents.textContent = data.documents || 'N/A';
+    elements.fee.textContent = data.fee || 'N/A';
+
+    // 處理連結
+    if (data.link) {
+        elements.officialLink.href = data.link;
+        elements.officialLink.textContent = '官方 / 更多資訊';
+    } else {
+        elements.officialLink.href = '#';
+        elements.officialLink.textContent = '無官方連結';
+    }
+
+    // 處理已到過紀錄（LocalStorage 邏輯）
+    const visited = JSON.parse(localStorage.getItem('visitedCountries')) || {};
+    elements.visitedCheckbox.checked = !!visited[data.countryName]; // 檢查是否已存在
+
+    // 顯示結果區 (利用 CSS Class 處理動畫)
+    clearMessage();
+    resultSection.classList.add('visible'); 
+}
+
+
+// --- API 請求與主邏輯 ---
+
+async function fetchVisaData(country) {
+    showLoading();
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/visa?country=${encodeURIComponent(country)}`);
+        
+        if (!response.ok) {
+            // 處理 404 (找不到國家) 或 500 錯誤
+            throw new Error(`查詢失敗: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.error) {
+            // 處理後端回傳的邏輯錯誤，例如：國家不存在
+            throw new Error(data.error);
+        }
+
+        renderVisaData(data);
+
+    } catch (error) {
+        console.error('API 查詢錯誤:', error);
+        showError('找不到該國家或伺服器錯誤。請確認輸入的名稱是否正確。');
+    }
+}
+
+// --- 事件監聽器 ---
+
+searchBtn.addEventListener('click', () => {
+    const country = countryInput.value.trim();
+    if (country) {
+        fetchVisaData(country);
+    } else {
+        showError('請輸入國家名稱後再查詢！');
+    }
 });
 
-/* ===== 簽證查詢頁面邏輯 ===== */
-function initVisaPage(){
-  const countryInput = document.getElementById("countryInput");
-  const searchBtn = document.getElementById("searchBtn");
-  if(!searchBtn) return;
-
-  const result = document.getElementById("result");
-  const countryNameEl = document.getElementById("countryName");
-  const visaRequirement = document.getElementById("visaRequirement");
-  const stayDays = document.getElementById("stayDays");
-  const processEl = document.getElementById("process");
-  const documentsEl = document.getElementById("documents");
-  const feeEl = document.getElementById("fee");
-  const officialLink = document.getElementById("officialLink");
-  const visitedCheckbox = document.getElementById("visitedCheckbox");
-
-  // 搜尋按鈕
-  searchBtn.addEventListener("click", async () => {
-    const q = countryInput.value.trim();
-    if(!q){ alert("請輸入國家名稱"); return; }
-    // 呼叫後端 API
-    try{
-      const resp = await fetch(`${API_BASE}/api/visa/${encodeURIComponent(q)}`);
-      if(!resp.ok){
-        alert("查無資料（可能後端未啟動或國家不存在）");
-        return;
-      }
-      const data = await resp.json();
-
-      // 顯示資料
-      result.classList.remove("hidden");
-      countryNameEl.textContent = data.name;
-      visaRequirement.textContent = data.visa_requirement;
-      stayDays.textContent = data.stay_days || "（未提供）";
-      processEl.textContent = data.process || "請參考官方網站步驟。";
-      documentsEl.textContent = data.documents || "一般護照、照片等。";
-      feeEl.textContent = data.fee || "依各國官方公告";
-      officialLink.href = data.official_link || "#";
-      officialLink.textContent = data.official_link ? "官方 / 更多資訊" : "暫無官方連結";
-
-      // 設定勾選框（是否已到過）
-      const visitedArr = loadVisited();
-      visitedCheckbox.checked = visitedArr.includes(data.code || data.name);
-
-      // 勾選變更 -> 寫 LocalStorage
-      visitedCheckbox.onchange = () => {
-        const arr = loadVisited();
-        const id = data.code || data.name;
-        if(visitedCheckbox.checked){
-          if(!arr.includes(id)) arr.push(id);
-        } else {
-          const idx = arr.indexOf(id);
-          if(idx>-1) arr.splice(idx,1);
-        }
-        saveVisited(arr);
-        // 更新造訪頁面（如果已開啟）
-        updateVisitedUI();
-      };
-
-    }catch(err){
-      console.error(err);
-      alert("伺服器連線錯誤，請確認後端有啟動或 API_BASE 是否正確。");
+countryInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        searchBtn.click(); // 按 Enter 鍵時觸發查詢
     }
-  });
-}
+});
 
-/* ===== 造訪紀錄頁面邏輯 ===== */
-function initVisitedPage(){
-  // 這會在 DOMContentLoaded 呼叫
-  updateVisitedUI();
-}
+elements.visitedCheckbox.addEventListener('change', (e) => {
+    const countryName = elements.countryName.textContent;
+    if (countryName && countryName !== '國家名稱') {
+        const visited = JSON.parse(localStorage.getItem('visitedCountries')) || {};
+        
+        if (e.target.checked) {
+            visited[countryName] = true; // 紀錄已造訪
+            alert(`已將 ${countryName} 加入您的造訪紀錄！`);
+        } else {
+            delete visited[countryName]; // 取消造訪
+            alert(`${countryName} 已從您的造訪紀錄中移除。`);
+        }
+        localStorage.setItem('visitedCountries', JSON.stringify(visited));
+        // 這裡可以考慮觸發造訪紀錄頁面的更新邏輯
+    }
+});
 
-function updateVisitedUI(){
-  const visitedListEl = document.getElementById("visitedList");
-  const visitedCountEl = document.getElementById("visitedCount");
-  const progressFill = document.getElementById("progressFill");
-  const percentText = document.getElementById("percentText");
-  if(!visitedListEl) return;
-  const arr = loadVisited();
-  visitedListEl.innerHTML = "";
-  if(arr.length===0){
-    visitedListEl.innerHTML = "<p>目前尚未勾選任何國家。</p>";
-  } else {
-    arr.forEach(id=>{
-      const div = document.createElement("div");
-      div.className = "visitedItem";
-      div.textContent = id;
-      visitedListEl.appendChild(div);
-    });
-  }
-
-  // 已造訪國家數量與進度（全球 195 國）
-  const total = 195;
-  const count = arr.length;
-  const percent = Math.round((count/total)*100);
-  visitedCountEl.textContent = count;
-  percentText.textContent = percent + "%";
-  progressFill.style.width = percent + "%";
-}
+// 初始設定：隱藏結果區，直到有資料
+resultSection.classList.remove('visible');
