@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Assistant - Taiwan Passport Visa Guide - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="script-visited.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Custom button style, using gradient and stronger shadow */
+        .btn-primary {
+            background-image: linear-gradient(to right, #1976D2, #1565C0);
+            box-shadow: 0 4px 15px -5px rgba(25, 118, 210, 0.7);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px -5px rgba(25, 118, 210, 0.9);
+        }
+
+        /* Orange button */
+        .btn-secondary {
+            background-image: linear-gradient(to right, #FF9800, #F57C00);
+            box-shadow: 0 4px 15px -5px rgba(255, 152, 0, 0.7);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px -5px rgba(255, 152, 0, 0.9);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="navbar bg-white p-4 sticky top-0 z-10 border-b border-gray-100">
+        <div class="container flex justify-between items-center px-4 md:px-0">
+            <a href="index_en.html" class="flex items-center text-xl font-extrabold text-blue-600 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1976D2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7 mr-2">
+                    <rect x="3" y="2" width="18" height="20" rx="2" ry="2"/>
+                    <line x1="7" x2="7" y1="2" y2="22"/>
+                    <line x1="3" x2="21" y1="12" y2="12"/>
+                    <circle cx="14" cy="7" r="2" fill="#FF9800" stroke="none"/>
+                </svg>
+                <span class="hidden sm:inline text-gray-800">Travel Assistant</span>
+                <span class="sm:hidden text-gray-800">Travel Aid</span>
+            </a>
+            
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <a href="visa_en.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100">Visa Info</a>
+                <a href="visited_en.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100">My Footprints</a>
+                <a href="index.html" class="nav-link bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 px-3 py-2 text-sm font-semibold rounded-lg transition duration-150">中文 (Chinese)</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container p-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-10 mt-8 mb-8">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+                <span class="text-blue-600">Taiwan Passport</span> Visa Check
+            </h1>
+            <p class="text-xl text-gray-600 mb-10 border-b pb-4">
+                Easily look up global visa regulations and plan your next international journey.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-blue-50 border-t-4 border-blue-500 rounded-xl p-6 shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-1">
+                    <h2 class="text-2xl font-bold text-blue-800 mb-3">🌏 Check Visa Information</h2>
+                    <p class="text-gray-700 mb-6">
+                        Instantly check countries' requirements for Visa-Free, Visa-on-Arrival, or e-Visa to ensure a smooth trip.
+                    </p>
+                    <a href="visa.html" class="btn btn-primary text-white rounded-xl shadow-lg inline-block w-full text-center py-3">
+                        Go to Visa Page &rarr;
+                    </a>
+                </div>
+
+                <div class="bg-orange-50 border-t-4 border-orange-500 rounded-xl p-6 shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-1">
+                    <h2 class="text-2xl font-bold text-orange-800 mb-3">📍 Record My Footprints</h2>
+                    <p class="text-gray-700 mb-6">
+                        Record the countries you have visited and view your completion statistics to motivate your dream of traveling the world!
+                    </p>
+                    <a href="visited.html" class="btn btn-secondary text-white rounded-xl shadow-lg inline-block w-full text-center py-3">
+                        Go to Footprints Page &rarr;
+                    </a>
+                </div>
+            </div>
+
+            <section class="mt-12 pt-6 border-t border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-700 mb-3">Data Source and Disclaimer</h2>
+                <p class="text-sm text-gray-500">
+                    The data in this application is based on publicly available information and is provided for quick reference only. We strongly recommend that you check the latest official announcements from foreign embassies and the Bureau of Consular Affairs before departure.
+                </p>
+            </section>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,19 +1,21 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>旅遊小幫手 - 台灣護照簽證查詢</title> 
+    <title>Travel Assistant - Taiwan Passport Visa Guide</title> 
     
     <script src="https://cdn.tailwindcss.com"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     
     <style>
+        /* 保持中文字體設定，因為數據中仍有中文 */
         body {
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #f7f7f7;
         }
+        /* 自定義 select 樣式 */
         .form-select {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3e%3cpath d='M7 7l3-3 3 3m0 6l-3 3-3-3' stroke='%234B5563' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
@@ -30,64 +32,63 @@
     <header class="shadow-md bg-white fixed w-full z-20 top-0">
         <div class="container mx-auto px-4 py-3 sm:py-4 flex justify-between items-center">
             
-            <a href="index.html" class="flex items-center space-x-2 text-xl sm:text-2xl font-bold text-gray-800 tracking-wider transition duration-150 hover:text-blue-600">
+            <a href="index_en.html" class="flex items-center space-x-2 text-xl sm:text-2xl font-bold text-gray-800 tracking-wider transition duration-150 hover:text-blue-600">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 flex-shrink-0">
                     <rect x="4" y="4" width="16" height="16" rx="2" stroke="#1D4ED8" stroke-width="2"/>
                     <path d="M12 4V20" stroke="#1D4ED8" stroke-width="2"/>
                     <circle cx="15.5" cy="7.5" r="1.5" fill="#F97316"/>
                 </svg>
                 
-                <span class="text-black">旅遊小幫手</span>
+                <span class="text-black">Travel Assistant</span>
             </a>
-            <!-- Navigation Links and Language Switch -->
+                <!-- Navigation Links and Language Switch -->
             <div class="flex items-center space-x-2 sm:space-x-4">
-                <a href="visa.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100">簽證資訊</a>
-                <a href="visited.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100">我的足跡</a>
+                <a href="visa_en.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100">Visa info</a>
+                <a href="visited_en.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100">My footprint</a>
                 <!-- Language Switch Button -->
-                <a href="visa_en.html" class="nav-link bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 px-3 py-2 text-sm font-semibold rounded-lg transition duration-150">English</a>
+                <a href="visa.html" class="nav-link bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 px-3 py-2 text-sm font-semibold rounded-lg transition duration-150">English</a>
             </div>
         </div>
     </nav>
-            </nav>
         </div>
     </header>
 
     <main class="container mx-auto px-4 py-6 sm:py-8">
         
         <div class="text-center mb-6 sm:mb-8">
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-blue-600 mb-1">台灣護照 簽證待遇</h1>
-            <p class="text-md text-gray-500">全球簽證要求與規定總覽。</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-1">Taiwan Passport Visa Guide</h1>
+            <p class="text-md text-blue-600">Global visa requirements and regulations overview.</p>
         </div>
 
         <div class="bg-white p-5 sm:p-8 rounded-xl shadow-lg mb-6 sm:mb-8 border border-blue-100">
             <h2 class="text-xl font-semibold text-blue-700 mb-4 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10h18M3 14h18M3 18h18M3 22h18" /></svg>
-                篩選與查詢
+                Filter and Search
             </h2>
             
             <div class="mb-4">
-                <label for="searchInput" class="block text-sm font-medium text-gray-700 mb-1">輸入國家名稱或英文縮寫...</label>
-                <input type="text" id="searchInput" placeholder="輸入國家名稱..." class="w-full border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150">
+                <label for="searchInput" class="block text-sm font-medium text-gray-700 mb-1">Enter country name or abbreviation...</label>
+                <input type="text" id="searchInput" placeholder="Enter country name..." class="w-full border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150">
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
 
                 <select id="visaFilter" class="form-select bg-white border border-gray-300 text-gray-700 h-10 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
-                    <option value="All">簽證類型 (篩選)</option> 
-                    <option value="Visa-Free">免簽證</option>
-                    <option value="Visa-on-Arrival">落地簽證</option>
-                    <option value="e-Visa">電子簽證/eTA</option>
-                    <option value="Required">須辦理簽證</option>
+                    <option value="All">Visa Type (Filter)</option> 
+                    <option value="Visa-Free">Visa-Free</option>
+                    <option value="Visa-on-Arrival">Visa-on-Arrival</option>
+                    <option value="e-Visa">e-Visa / eTA</option>
+                    <option value="Required">Visa Required</option>
                 </select>
                 
                 <select id="categoryFilter" class="form-select bg-white border border-gray-300 text-gray-700 h-10 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
-                    <option value="All">所有地區 (載入中...)</option>
+                    <option value="All">All Regions (Filter)</option>
                     </select>
                 
                 <select id="sortOption" class="form-select bg-white border border-gray-300 text-gray-700 h-10 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
-                    <option value="name_asc">國家名稱 (A-Z)</option>
-                    <option value="days_desc">停留天數 (多->少)</option>
-                    <option value="days_asc">停留天數 (少->多)</option>
+                    <option value="name_asc">Country Name (A-Z)</option>
+                    <option value="days_desc">Stay Duration (Max &darr;)</option>
+                    <option value="days_asc">Stay Duration (Min &uarr;)</option>
                 </select>
 
             </div>
@@ -95,24 +96,24 @@
         
         <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 flex items-center mt-6 sm:mt-8">
             <span class="inline-block w-3 h-3 bg-blue-500 rounded-full mr-3 flex-shrink-0"></span>
-            簽證統計儀表板
+            Visa Statistics Dashboard
         </h2>
         <div id="statsContainer" class="grid grid-cols-2 md:grid-cols-6 gap-3 sm:gap-4 mb-8">
-            <div class="col-span-full text-center text-gray-500 p-4">載入統計數據中...</div>
+            <div class="col-span-full text-center text-gray-500 p-4">Loading statistics...</div>
         </div>
 
 
         <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 flex items-center">
             <span class="inline-block w-3 h-3 bg-blue-500 rounded-full mr-3 flex-shrink-0"></span>
-            國家列表
+            Country List
         </h2>
         
         <div id="loadingMessage" class="text-center text-lg text-gray-500 p-8">
-            正在載入數據，請稍候...
+            Loading data, please wait...
         </div>
 
         <div id="noResults" class="hidden text-center text-lg text-gray-500 p-8 border border-dashed border-gray-300 rounded-lg bg-white shadow-sm">
-            抱歉，沒有找到符合您篩選條件的國家/地區。
+            Sorry, no countries matched your filter criteria.
         </div>
 
         <div id="visaList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
@@ -121,7 +122,7 @@
     </main>
 
     <footer class="bg-white mt-10 sm:mt-12 py-4 sm:py-6 text-center text-gray-500 text-xs sm:text-sm border-t border-gray-200 shadow-inner">
-        &copy; 2025 旅遊小幫手。資料來源為<a href="https://www.boca.gov.tw/cp-37-220-9f130-1.html" class="text-blue-600 hover:underline">我國外交部領事事務局</a>。
+        &copy; 2025 Travel Assistant. Data source: <a href="https://www.boca.gov.tw/cp-37-220-9f130-1.html" class="text-blue-600 hover:underline">Bureau of Consular Affairs, MOFA, R.O.C. (Taiwan)</a>.
     </footer>
     
     <script src="script.js"></script> 

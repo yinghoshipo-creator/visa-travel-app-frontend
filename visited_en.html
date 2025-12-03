@@ -1,122 +1,113 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的到訪國家 - 台灣護照</title>
+    <title>My Visited Countries - Taiwan Passport</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
-    <!-- Using a simplified style for progress bar for Tailwind compatibility -->
     <style>
         .progress-bar-fill {
             transition: width 1s ease-in-out;
         }
+        /* 保持風格一致 */
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f7f7f7;
+        }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Navigation Bar -->
+<body class="bg-gray-50 min-h-screen pt-16 sm:pt-20">
     <nav class="navbar bg-white p-4 sticky top-0 z-10 border-b border-gray-100">
         <div class="container flex justify-between items-center px-4 md:px-0">
-            <!-- Logo Block -->
-            <a href="index.html" class="flex items-center text-xl font-extrabold text-blue-600 transition">
+            <a href="index_en.html" class="flex items-center text-xl font-extrabold text-blue-600 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1976D2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7 mr-2">
                     <rect x="3" y="2" width="18" height="20" rx="2" ry="2"/>
                     <line x1="7" x2="7" y1="2" y2="22"/>
                     <line x1="3" x2="21" y1="12" y2="12"/>
                     <circle cx="14" cy="7" r="2" fill="#FF9800" stroke="none"/>
                 </svg>
-                <span class="hidden sm:inline text-gray-800">台灣旅遊小幫手</span>
-                <span class="sm:hidden text-gray-800">旅遊助手</span>
+                <span class="hidden sm:inline text-gray-800">Travel Assistant</span>
+                <span class="sm:hidden text-gray-800">Travel Aid</span>
             </a>
             
-            <!-- Navigation Links and Language Switch -->
             <div class="flex items-center space-x-2 sm:space-x-4">
-                <a href="visa.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100">簽證資訊</a>
-                <a href="visited.html" class="nav-link text-blue-600 font-bold px-3 py-2 text-sm rounded-lg bg-blue-50">我的足跡</a>
-                <!-- Language Switch Button -->
-                <a href="visited_en.html" class="nav-link bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 px-3 py-2 text-sm font-semibold rounded-lg transition duration-150">English</a>
+                <a href="visa_en.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100">Visa Info</a>
+                <a href="visited_en.html" class="nav-link text-orange-600 font-bold px-3 py-2 text-sm rounded-lg bg-orange-50">My Footprints</a>
+                <a href="visited.html" class="nav-link bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 px-3 py-2 text-sm font-semibold rounded-lg transition duration-150">中文 (Chinese)</a>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content Area -->
     <main class="container p-4">
         <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 mt-8 mb-8">
             <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4 text-center">
-                追蹤我的 <span class="text-orange-600">到訪國家</span>
+                Track My <span class="text-orange-600">Visited Countries</span>
             </h1>
             <p class="text-center text-gray-600 mb-8">
-                選取您曾經到訪的國家。資料將同步至雲端。
+                Select the countries you have visited. Data will be synchronized to the cloud.
             </p>
 
-            <!-- User ID and Progress Display -->
             <div class="bg-blue-50 p-4 rounded-xl mb-6 shadow-md">
-                <p class="text-xs text-gray-500 mb-1">您的專屬使用者 ID (用於資料檢索和分享):</p>
+                <p class="text-xs text-gray-500 mb-1">Your Unique User ID (for data retrieval and sharing):</p>
                 <div class="flex justify-between items-center">
-                    <p id="userIdDisplay" class="font-mono text-sm text-blue-700 truncate">載入中...</p>
-                    <button onclick="copyUserId()" class="ml-4 p-1.5 bg-blue-200 text-blue-800 rounded-lg hover:bg-blue-300 text-xs font-semibold">複製 ID</button>
+                    <p id="userIdDisplay" class="font-mono text-sm text-blue-700 truncate">Loading...</p>
+                    <button onclick="copyUserId()" class="ml-4 p-1.5 bg-blue-200 text-blue-800 rounded-lg hover:bg-blue-300 text-xs font-semibold">Copy ID</button>
                 </div>
             </div>
 
-            <!-- Progress Bar and Statistics -->
             <div class="bg-white p-6 rounded-xl border border-gray-200 mb-8 shadow-inner">
-                <h2 class="text-2xl font-bold text-gray-800 mb-3">全球旅行進度</h2>
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Global Travel Progress</h2>
                 
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-gray-600 font-medium">已到訪: <span id="visitedCount" class="text-orange-600 font-extrabold">0</span> / <span id="totalCountriesCount">0</span> 個國家</span>
+                    <span class="text-gray-600 font-medium">Visited: <span id="visitedCount" class="text-orange-600 font-extrabold">0</span> / <span id="totalCountriesCount">0</span> Countries</span>
                     <span id="percentageDisplay" class="text-lg font-extrabold text-orange-600">0%</span>
                 </div>
                 
-                <!-- Progress Bar -->
                 <div class="w-full bg-gray-200 rounded-full h-3">
                     <div id="progressBar" class="progress-bar-fill h-3 rounded-full bg-orange-500" style="width: 0%"></div>
                 </div>
             </div>
 
             <div class="bg-white p-6 rounded-xl border border-gray-200 mb-8 shadow-inner">
-                <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">篩選與搜尋</h2>
+                <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Filter and Search</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     
                     <select id="visitedFilter" class="w-full border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
-                        <option value="All">所有狀態 (篩選)</option>
-                        <option value="Visited">已到訪</option>
-                        <option value="Not-Visited">未到訪</option>
+                        <option value="All">All Status (Filter)</option>
+                        <option value="Visited">Visited</option>
+                        <option value="Not-Visited">Not Visited</option>
                     </select>
 
                     <select id="categoryFilter" class="w-full border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
-                        <option value="All">所有地區 (載入中...)</option>
+                        <option value="All">All Regions (Loading...)</option>
                         </select>
 
-                    <input type="text" id="searchInput" placeholder="搜尋國家名稱..." class="w-full border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    <input type="text" id="searchInput" placeholder="Search Country Name..." class="w-full border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
                 </div>
             </div>
 
-            <!-- List of Countries (Checkboxes) -->
-            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">國家列表</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Country Checklist</h2>
             <div id="countryChecklist" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3">
-                <!-- Checkboxes will be dynamically inserted by script-visited.js -->
-                <p class="text-center text-gray-500 p-8 col-span-full" id="loadingMessage">正在載入國家列表...</p>
+                <p class="text-center text-gray-500 p-8 col-span-full" id="loadingMessage">Loading country list...</p>
             </div>
         </div>
     </main>
 
-    <!-- Modal for Copying Confirmation -->
     <div id="copyModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white p-6 rounded-lg shadow-2xl">
-            <p class="text-lg font-semibold text-green-600">複製成功！</p>
-            <p class="text-gray-600 mt-2">您的使用者 ID 已複製到剪貼簿。</p>
-            <button onclick="document.getElementById('copyModal').classList.add('hidden')" class="mt-4 w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition">關閉</button>
+            <p class="text-lg font-semibold text-green-600">Copied Successfully!</p>
+            <p class="text-gray-600 mt-2">Your User ID has been copied to the clipboard.</p>
+            <button onclick="document.getElementById('copyModal').classList.add('hidden')" class="mt-4 w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition">Close</button>
         </div>
     </div>
 
-    <!-- JavaScript Imports -->
     <script type="module" src="script-visited.js"></script>
     <script>
         // Custom copy function to handle clipboard access within the environment
         function copyUserId() {
             const userIdText = document.getElementById('userIdDisplay').textContent;
             try {
-                // Use execCommand('copy') for better compatibility in iframe environments
                 const tempInput = document.createElement('textarea');
                 tempInput.value = userIdText;
                 document.body.appendChild(tempInput);
