@@ -34,7 +34,7 @@ async function fetchVisaData() {
     
     try {
         // *** 執行真實的 API 呼叫，假設端點是 /visa_requirements ***
-        const response = await fetch(`${API_BASE_URL}/visa_requirements`);
+        const response = await fetch(`${API_BASE_URL}/api/visas`);
         
         if (!response.ok) {
             // 如果 API 響應狀態碼不是 200-299，則拋出錯誤
