@@ -7,15 +7,17 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- 使用 Inter/Noto Sans TC 混和字體，確保中文顯示清晰 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #f7f7f7;
         }
-        /* 優化 Select 樣式，增加 padding 使其在手機上更易點擊 */
+        /* 優化 Select 元素外觀 */
         .form-select {
+            width: 100%; /* 確保在單欄時佔滿寬度 */
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3e%3cpath d='M7 7l3-3 3 3m0 6l-3 3-3-3' stroke='%234B5563' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
             background-position: right 0.75rem center;
@@ -25,40 +27,47 @@
             appearance: none;
         }
 
-        /* 儀表板卡片共用樣式 */
+        /* 儀表板卡片樣式 */
         .stat-card {
             @apply bg-white p-4 rounded-xl shadow-lg border border-gray-100 transition duration-300 hover:shadow-xl;
+            min-height: 120px; /* 確保卡片有足夠高度，避免內容過少時壓縮 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        /* 調整文字大小以適應中文 */
+        .stat-card p {
+            line-height: 1.2;
         }
     </style>
 </head>
-<!-- 調整 pt-16/pt-20 為 body 上的 padding-top，避免內容被 fixed header 遮擋 -->
 <body class="pt-16 sm:pt-20"> 
     
     <header class="shadow-md bg-white fixed w-full z-20 top-0">
-        <!-- 導航列容器，使用 max-w-7xl 增加左右間距 -->
         <div class="container mx-auto px-4 py-3 sm:py-4 flex justify-between items-center max-w-7xl">
             
             <a href="index.html" class="flex items-center space-x-2 text-xl sm:text-2xl font-bold text-gray-800 tracking-wider transition duration-150 hover:text-blue-600">
-                <!-- Logo SVG 簡化 -->
+                <!-- Logo SVG -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7 flex-shrink-0">
                     <rect x="3" y="2" width="18" height="20" rx="2" ry="2"/>
                     <line x1="7" x2="7" y1="2" y2="22"/>
                     <line x1="3" x2="21" y1="12" y2="12"/>
                     <circle cx="14" cy="7" r="2" fill="#F97316" stroke="none"/>
                 </svg>
-                <!-- RWD 調整: 在桌面版顯示「旅遊小幫手」，手機版只顯示「旅遊助手」 (與首頁一致) -->
-                <span class="text-gray-800 hidden sm:inline">旅遊小幫手</span>
-                <span class="text-gray-800 sm:hidden">旅遊助手</span>
+                <!-- RWD 調整: 在手機上顯示 '旅遊小幫手' -->
+                <span class="text-gray-800 hidden sm:inline">旅遊助理</span>
+                <span class="text-gray-800 sm:hidden">旅遊小幫手</span>
             </a>
             
-            <!-- Navigation Links and Language Switch -->
+            <!-- 導航連結與語言切換 -->
             <div class="flex items-center space-x-2 sm:space-x-4">
-                <!-- RWD 調整: 在手機上隱藏次要連結 (hidden sm:block) -->
+                <!-- RWD 調整: 在手機上隱藏次要連結 -->
                 <a href="visa.html" class="nav-link text-blue-600 font-bold px-3 py-2 text-sm rounded-lg bg-blue-50 border border-blue-200 hidden sm:block">簽證資訊</a>
                 <a href="visited.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hidden sm:block">我的足跡</a>
                 
-                <!-- Language Switch Button - RWD 調整 padding -->
-                <a href="visa_en.html" class="nav-link bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 px-3 py-1.5 sm:py-2 text-sm font-semibold rounded-lg transition duration-150 shadow-sm">
+                <!-- 語言切換按鈕 - 切換至英文版 -->
+                <a href="visa_en.html" class="nav-link bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200 px-3 py-1.5 sm:py-2 text-sm font-semibold rounded-lg transition duration-150 shadow-sm">
                     English
                 </a>
             </div>
@@ -74,57 +83,60 @@
             <p class="text-lg text-gray-500">全球簽證要求與規定總覽。</p>
         </div>
 
-        <!-- 簽證統計儀表板優化 -->
+        <!-- 簽證統計儀表板 優化手機版排版 -->
         <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
             簽證統計儀表板
         </h2>
         
-        <!-- 優化: 使用更現代的卡片佈局，RWD 調整為手機 3 欄，桌面 6 欄 -->
-        <div id="statsContainer" class="grid grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4 mb-8">
-            <!-- 數據卡片範例 (請替換為您的實際數據) -->
+        <!-- OPTIMIZED: 手機版改為 grid-cols-2，大卡片佔滿兩欄 -->
+        <div id="statsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4 mb-8">
             
-            <!-- Card 1: 總免簽/便利數 -->
-            <div class="stat-card col-span-1 md:col-span-2 text-center">
-                <p class="text-xs font-medium text-gray-500 uppercase">免簽/便利總數</p>
+            <!-- 卡片 1: 總免簽/便利數 (手機上佔 2 欄) -->
+            <div class="stat-card col-span-2 sm:col-span-3 md:col-span-2 text-center">
+                 <!-- Globe Icon (from Lucide) -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500 mx-auto mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                
+                <p class="text-xs font-medium text-gray-500 uppercase">總免簽/便利數</p>
                 <p class="text-3xl sm:text-4xl font-extrabold text-blue-600 mt-1" data-stat="totalVisaFree">144</p>
-                <p class="text-sm text-gray-400">（含 VOA & eTA）</p>
+                <p class="text-sm text-gray-400">(含落地簽/eTA)</p>
             </div>
             
-            <!-- Card 2: 純免簽國家數 (顏色變化) -->
+            <!-- 卡片 2: 免簽證數 -->
             <div class="stat-card col-span-1 md:col-span-1 text-center bg-green-50">
-                <p class="text-xs font-medium text-green-700 uppercase">純免簽</p>
+                <p class="text-xs font-medium text-green-700 uppercase">免簽證</p>
                 <p class="text-3xl sm:text-4xl font-extrabold text-green-600 mt-1" data-stat="visaFreeCount">94</p>
             </div>
             
-            <!-- Card 3: 落地簽國家數 (顏色變化) -->
+            <!-- 卡片 3: 落地簽證數 -->
             <div class="stat-card col-span-1 md:col-span-1 text-center bg-orange-50">
                 <p class="text-xs font-medium text-orange-700 uppercase">落地簽證</p>
                 <p class="text-3xl sm:text-4xl font-extrabold text-orange-600 mt-1" data-stat="voaCount">35</p>
             </div>
 
-            <!-- Card 4: 電子簽證/eTA 國家數 (顏色變化) -->
+            <!-- 卡片 4: 電子簽證/eTA 數 -->
             <div class="stat-card col-span-1 md:col-span-1 text-center bg-purple-50">
-                <p class="text-xs font-medium text-purple-700 uppercase">電子簽證</p>
+                <p class="text-xs font-medium text-purple-700 uppercase">電子簽證/eTA</p>
                 <p class="text-3xl sm:text-4xl font-extrabold text-purple-600 mt-1" data-stat="etaCount">15</p>
             </div>
             
-            <!-- Card 5: 須辦理簽證國家數 (顏色變化) -->
+            <!-- 卡片 5: 須辦理簽證數 -->
             <div class="stat-card col-span-1 md:col-span-1 text-center bg-red-50">
-                <p class="text-xs font-medium text-red-700 uppercase">需簽證</p>
+                <p class="text-xs font-medium text-red-700 uppercase">須辦理簽證</p>
                 <p class="text-3xl sm:text-4xl font-extrabold text-red-600 mt-1" data-stat="requiredCount">45</p>
             </div>
 
-            <!-- Card 6: 總國家數 (淺色底) -->
-            <div class="stat-card col-span-1 md:col-span-1 text-center bg-gray-100">
-                <p class="text-xs font-medium text-gray-600 uppercase">總國家數</p>
+            <!-- 卡片 6: 總國家數 (手機上佔 2 欄) -->
+            <div class="stat-card col-span-2 sm:col-span-3 md:col-span-1 text-center bg-gray-100">
+                <p class="text-xs font-medium text-gray-600 uppercase">總國家/地區數</p>
                 <p class="text-3xl sm:text-4xl font-extrabold text-gray-800 mt-1" data-stat="totalCountries">195</p>
             </div>
             
         </div>
-        <!-- 簽證統計儀表板優化結束 -->
+        <!-- 簽證統計儀表板 結束 -->
 
-        <!-- 篩選與查詢區塊 -->
+        <!-- 篩選與查詢區塊 優化手機版排版 -->
         <div class="bg-white p-5 sm:p-8 rounded-xl shadow-lg mb-6 sm:mb-8 border border-blue-100">
             <h2 class="text-xl font-semibold text-blue-700 mb-4 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10h18M3 14h18M3 18h18M3 22h18" /></svg>
@@ -133,19 +145,19 @@
             
             <div class="mb-4">
                 <label for="searchInput" class="block text-sm font-medium text-gray-700 mb-1">輸入國家名稱或英文縮寫...</label>
-                <!-- RWD 調整: 輸入框 padding 稍作調整，並使用 rounded-xl -->
+                <!-- RWD 調整: 輸入框的圓角與陰影 -->
                 <input type="text" id="searchInput" placeholder="輸入國家名稱..." class="w-full border border-gray-300 p-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 shadow-sm">
             </div>
 
-            <!-- RWD 調整: 手機上調整為 1 欄或 2 欄網格，這裡選用 2 欄，讓按鈕更大 -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+            <!-- OPTIMIZED: 手機版強制使用 grid-cols-1，確保文字不會被截斷 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
 
-                <!-- 簽證類型 -->
-                <select id="visaFilter" class="form-select bg-white border border-gray-300 text-gray-700 h-10 p-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm col-span-2 sm:col-span-1">
+                <!-- 簽證類型篩選 -->
+                <select id="visaFilter" class="form-select bg-white border border-gray-300 text-gray-700 h-10 p-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
                     <option value="All">簽證類型 (篩選)</option> 
                     <option value="Visa-Free">免簽證</option>
-                    <option value="Visa-on-Arrival">落地簽證</option>
-                    <option value="e-Visa">電子簽證/eTA</option>
+                    <option value="Visa-on-Arrival">落地簽證 (VOA)</option>
+                    <option value="e-Visa">電子簽證 / eTA</option>
                     <option value="Required">須辦理簽證</option>
                 </select>
                 
@@ -157,8 +169,8 @@
                 <!-- 排序選項 -->
                 <select id="sortOption" class="form-select bg-white border border-gray-300 text-gray-700 h-10 p-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
                     <option value="name_asc">國家名稱 (A-Z)</option>
-                    <option value="days_desc">停留天數 (多->少)</option>
-                    <option value="days_asc">停留天數 (少->多)</option>
+                    <option value="days_desc">最長天數 (高->低)</option>
+                    <option value="days_asc">最長天數 (低->高)</option>
                 </select>
 
             </div>
@@ -166,25 +178,25 @@
         
         <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 flex items-center mt-6 sm:mt-8">
             <span class="inline-block w-3 h-3 bg-blue-500 rounded-full mr-3 flex-shrink-0"></span>
-            國家列表
+            國家/地區列表
         </h2>
         
         <div id="loadingMessage" class="text-center text-lg text-gray-500 p-8">
-            正在載入數據，請稍候...
+            資料載入中，請稍候...
         </div>
 
         <div id="noResults" class="hidden text-center text-lg text-gray-500 p-8 border border-dashed border-gray-300 rounded-lg bg-white shadow-sm">
-            抱歉，沒有找到符合您篩選條件的國家/地區。
+            抱歉，沒有國家/地區符合您的篩選條件。
         </div>
 
         <div id="visaList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            <!-- 國家列表將在這裡由 JavaScript 載入 -->
+            <!-- 國家列表將由 JavaScript 載入至此 -->
         </div>
 
     </main>
 
     <footer class="bg-white mt-10 sm:mt-12 py-4 sm:py-6 text-center text-gray-500 text-xs sm:text-sm border-t border-gray-200 shadow-inner">
-        &copy; 2025 旅遊小幫手。資料來源為<a href="https://www.boca.gov.tw/cp-37-220-9f130-1.html" class="text-blue-600 hover:underline">我國外交部領事事務局</a>。
+        &copy; 2025 旅遊助理. 資料來源參考<a href="https://www.boca.gov.tw/cp-37-220-9f130-1.html" class="text-blue-600 hover:underline">中華民國外交部領事事務局 (BOCA)</a>.
     </footer>
     
     <script src="script.js"></script> 
