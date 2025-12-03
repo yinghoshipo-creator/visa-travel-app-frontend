@@ -204,7 +204,7 @@ async function fetchVisaData() {
             countryEn: country.countryNameEn || '', 
             visaType: mapVisaType(country.visaType), 
             duration: country.stayDays || 'N/A', 
-            category: country.region || translate('其他地區'), 
+            category: country.regionZh || translate('其他地區'), 
             notes: country.notes || country.requirementDetail || translate('請參考官方連結') 
         }));
 

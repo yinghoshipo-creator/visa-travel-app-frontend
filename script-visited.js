@@ -183,7 +183,7 @@ function filterAndRenderCountries() {
         if (visitedStatus === 'Not-Visited' && isVisited) return false;
 
         // 2. 篩選地區
-        if (region !== 'All' && country.region !== region) return false;
+        if (region !== 'All' && country.regionZh !== region) return false;
 
         // 3. 篩選搜尋文字
         if (searchText && !nameMatch) return false;
