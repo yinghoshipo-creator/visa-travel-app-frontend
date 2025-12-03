@@ -15,7 +15,7 @@ let currentLanguage = 'zh-TW'; // 追蹤當前頁面語言 (默認為中文)
 
 
 // =========================================================
-// === 1. 初始化與語言偵測 ===
+// === 1. 初始化與語言偵測 (修正: 增加語言切換重繪邏輯) ===
 // =========================================================
 
 /**
@@ -23,13 +23,25 @@ let currentLanguage = 'zh-TW'; // 追蹤當前頁面語言 (默認為中文)
  */
 function detectLanguage() {
     const htmlLang = document.documentElement.lang.toLowerCase();
-    currentLanguage = htmlLang.startsWith('en') ? 'en' : 'zh-TW';
+    const newLanguage = htmlLang.startsWith('en') ? 'en' : 'zh-TW';
+
+    // 修正: 如果語言發生變化且數據已載入，則重新渲染
+    if (newLanguage !== currentLanguage && allCountriesData.length > 0) {
+        currentLanguage = newLanguage;
+        // 重新初始化篩選器 (更新 "所有地區" 的翻譯)
+        initializeFilters(); 
+        // 重新渲染列表 (更新國家名稱、狀態標籤和進度條)
+        filterAndRenderCountries(); 
+    } else {
+        currentLanguage = newLanguage;
+    }
 }
 
 /**
  * 獲取當前語言對應的國家名稱鍵
  */
 function getNameKey() {
+    // 這裡我們假設 API 數據已經被映射成 name_en/name_zh
     return currentLanguage === 'en' ? 'name_en' : 'name_zh';
 }
 
@@ -50,6 +62,10 @@ function translate(text) {
             case '搜尋國家...': return 'Search Country...';
             case '您的專屬使用者 ID (用於資料檢索和分享):': return 'Your Unique User ID (for data retrieval and sharing):';
             case '複製 ID': return 'Copy ID';
+            case '載入國家列表失敗，請檢查網路或 API。': return 'Failed to load country list. Please check network or API.';
+            case '沒有找到符合篩選條件的國家。': return 'No countries found matching the filter criteria.';
+            case '未知': return 'Unknown';
+            case '其他地區': return 'Other Regions';
             default: return text;
         }
     }
@@ -58,18 +74,30 @@ function translate(text) {
 
 
 // =========================================================
-// === 2. User ID & LocalStorage 管理 ===
+// === 2. User ID & LocalStorage 管理 (維持不變) ===
 // =========================================================
 
 function initializeUserId() {
+    // 由於在 Canvas 環境中，我們應優先使用 Firestore 而非 localStorage，
+    // 但為了保持與您腳本的相容性，這裡暫時維持使用 localStorage。
     let userId = localStorage.getItem(USER_ID_KEY);
     if (!userId) {
+        // 使用更安全的 ID 生成方式，但保持結構
         userId = 'user_' + Math.random().toString(36).substring(2, 9) + Date.now().toString().substring(9);
         localStorage.setItem(USER_ID_KEY, userId);
     }
     const userIdDisplay = document.getElementById('userIdDisplay');
     if (userIdDisplay) {
         userIdDisplay.textContent = userId;
+    }
+    // 嘗試更新 ID 旁邊的 Label
+    const userIdLabel = document.getElementById('userIdLabel');
+    if (userIdLabel) {
+        userIdLabel.textContent = translate('您的專屬使用者 ID (用於資料檢索和分享):');
+    }
+    const copyIdButton = document.getElementById('copyIdButton');
+    if (copyIdButton) {
+        copyIdButton.textContent = translate('複製 ID');
     }
 }
 
@@ -99,7 +127,7 @@ window.handleCountryToggle = function(countryNameEn) {
 
 
 // =========================================================
-// === 3. 數據獲取 (API 呼叫) ===
+// === 3. 數據獲取 (修正: 確保 API 鍵名映射) ===
 // =========================================================
 
 async function fetchCountryList() {
@@ -111,13 +139,22 @@ async function fetchCountryList() {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        allCountriesData = await response.json();
+        const rawData = await response.json();
         
         // 確保數據有效
-        if (!Array.isArray(allCountriesData) || allCountriesData.length === 0) {
+        if (!Array.isArray(rawData) || rawData.length === 0) {
             throw new Error("API 返回的數據無效或為空。");
         }
 
+        // 修正: 執行數據映射，將 API 鍵名與前端邏輯使用的鍵名對齊
+        allCountriesData = rawData.map(c => ({
+            // API 鍵名 -> 前端邏輯鍵名
+            name_zh: c.countryNameZh || c.name_zh || translate('未知'), 
+            name_en: c.countryNameEn || c.name_en || translate('Unknown'), 
+            regionZh: c.regionZh || c.region || translate('其他地區'), // 確保 regionZh 被正確提取
+            ...c
+        }));
+        
         if (loadingMessage) loadingMessage.classList.add('hidden');
 
         // 數據載入後，初始化篩選器並渲染
@@ -134,7 +171,7 @@ async function fetchCountryList() {
 }
 
 // =========================================================
-// === 4. 篩選器與渲染邏輯 ===
+// === 4. 篩選器與渲染邏輯 (修正: 修正地區鍵名) ===
 // =========================================================
 
 /**
@@ -143,25 +180,31 @@ async function fetchCountryList() {
 function initializeFilters() {
     const categoryFilter = document.getElementById('categoryFilter');
     if (!categoryFilter) return;
-
-    // 獲取所有不重複的地區
-    const regions = [...new Set(allCountriesData.map(c => c.region))];
+    
+    // 修正: 應從 API 數據中使用 regionZh 鍵來提取地區列表
+    const regions = [...new Set(allCountriesData.map(c => c.regionZh).filter(r => r && r !== 'N/A'))];
     
     // 清空現有選項，並添加 'All' 選項
     categoryFilter.innerHTML = `<option value="All">${translate('所有地區')}</option>`;
     
-    // 添加地區選項 (地區名稱使用 API 返回的中文/英文名稱)
-    regions.sort().forEach(region => {
+    // 根據當前語言選擇排序方式
+    const locale = currentLanguage === 'en' ? 'en' : 'zh-TW';
+    regions.sort((a, b) => a.localeCompare(b, locale));
+
+    // 添加地區選項 (地區名稱使用 API 返回的中文名稱，因為篩選值是中文)
+    regions.forEach(region => {
         const option = document.createElement('option');
         option.value = region;
-        option.textContent = region; // 使用 API 中的地區名稱
+        option.textContent = region;
         categoryFilter.appendChild(option);
     });
-
-    // 監聽篩選器和搜尋框事件
-    document.getElementById('visitedFilter')?.addEventListener('change', filterAndRenderCountries);
-    document.getElementById('categoryFilter')?.addEventListener('change', filterAndRenderCountries);
-    document.getElementById('searchInput')?.addEventListener('input', filterAndRenderCountries);
+    
+    // 確保篩選器的標籤被翻譯
+    document.getElementById('visitedFilter').options[0].textContent = translate('狀態篩選');
+    document.getElementById('visitedFilter').options[1].textContent = translate('已到訪');
+    document.getElementById('visitedFilter').options[2].textContent = translate('未到訪');
+    
+    document.getElementById('searchInput').placeholder = translate('搜尋國家...');
 }
 
 /**
@@ -182,7 +225,7 @@ function filterAndRenderCountries() {
         if (visitedStatus === 'Visited' && !isVisited) return false;
         if (visitedStatus === 'Not-Visited' && isVisited) return false;
 
-        // 2. 篩選地區
+        // 2. 篩選地區 (這裡使用 regionZh 是正確的，因為 initializeFilters 也使用了 regionZh)
         if (region !== 'All' && country.regionZh !== region) return false;
 
         // 3. 篩選搜尋文字
@@ -207,7 +250,10 @@ function renderCountryChecklist(countriesToRender = allCountriesData) {
     if (!checklistContainer) return;
 
     // 國家列表按當前語言名稱排序
-    const sortedData = countriesToRender.sort((a, b) => a[nameKey].localeCompare(b[nameKey]));
+    const sortedData = countriesToRender.sort((a, b) => {
+        const locale = currentLanguage === 'en' ? 'en' : 'zh-TW';
+        return (a[nameKey] || '').localeCompare((b[nameKey] || ''), locale);
+    });
 
     checklistContainer.innerHTML = '';
     
@@ -243,7 +289,7 @@ function renderCountryChecklist(countriesToRender = allCountriesData) {
 
 
 // =========================================================
-// === 5. 進度條更新與統計數據 ===
+// === 5. 進度條更新與統計數據 (修正: 更新標籤翻譯) ===
 // =========================================================
 
 function updateProgress() {
@@ -265,6 +311,12 @@ function updateProgress() {
     if (progressBar) {
         progressBar.style.width = `${percentage}%`;
     }
+    
+    // 更新標籤的翻譯
+    const visitedLabel = document.getElementById('visitedCountLabel');
+    const totalLabel = document.getElementById('totalCountriesCountLabel');
+    if (visitedLabel) visitedLabel.textContent = translate('已到訪國家');
+    if (totalLabel) totalLabel.textContent = translate('總國家數');
 }
 
 

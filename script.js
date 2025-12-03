@@ -7,7 +7,7 @@ const API_BASE_URL = 'https://visa-travel-app.zeabur.app';
 
 // 【本地備用數據，用於 API 故障時】
 const MOCK_VISA_DATA = [
-    // 保持數據的中文和英文名稱
+    // 確保 MOCK 數據的鍵名與 transformedData 的輸出結構一致
     { countryCn: '汶萊', countryEn: 'Brunei', visaType: 'Visa-Free', duration: '14天', notes: '觀光免簽。', category: '亞太地區' },
     { countryCn: '日本', countryEn: 'Japan', visaType: 'Visa-Free', duration: '90天', notes: '觀光、商務等短期停留。', category: '亞太地區' },
     { countryCn: '德國', countryEn: 'Germany', visaType: 'Visa-Free', duration: '90天', notes: '申根區免簽。', category: '歐洲地區(申根區)' }, 
@@ -22,7 +22,7 @@ let isDataLoaded = false;
 let currentLanguage = 'zh-TW'; // ★ 預設為中文，但會被 detectLanguage 覆蓋
 
 // =========================================================
-// === 輔助函數：多語言翻譯與偵測 (核心修正) ===
+// === 輔助函數：多語言翻譯與偵測 (修正與優化) ===
 // =========================================================
 
 /**
@@ -30,7 +30,18 @@ let currentLanguage = 'zh-TW'; // ★ 預設為中文，但會被 detectLanguage
  */
 function detectLanguage() {
     const htmlLang = document.documentElement.lang.toLowerCase();
-    currentLanguage = htmlLang.startsWith('en') ? 'en' : 'zh-TW';
+    const newLanguage = htmlLang.startsWith('en') ? 'en' : 'zh-TW';
+
+    // 如果語言發生變化且數據已載入，則重新渲染
+    if (newLanguage !== currentLanguage && isDataLoaded) {
+        currentLanguage = newLanguage;
+        // 重新載入地區列表 (更新翻譯後的 "所有地區" 標籤)
+        fetchRegions();
+        // 重新篩選和渲染列表 (更新國家名稱、標籤等翻譯)
+        filterAndSortData();
+    } else {
+        currentLanguage = newLanguage;
+    }
 }
 
 /**
@@ -39,8 +50,10 @@ function detectLanguage() {
 function translate(text) {
     // 如果是中文頁面 (或找不到翻譯)，直接返回原始文本
     if (currentLanguage === 'zh-TW') {
-        // 為了讓中文頁面能顯示「未知」
         if (text === '未知') return '未知'; 
+        // 額外處理
+        if (text === 'Unknown') return '未知';
+        if (text === 'Other Regions') return '其他地區';
         return text; 
     }
 
@@ -73,6 +86,7 @@ function translate(text) {
         // 雜項
         case '請參考官方連結': return 'Please refer to official sources';
         case '全部簽證': return 'All'; 
+        case '其他地區': return 'Other Regions';
         
         default: return text; 
     }
@@ -101,16 +115,24 @@ function mapVisaType(chineseType) {
  * 核心函數：根據簽證類型回傳對應的 Tailwind CSS 顏色類別和標籤 (自動中英切換)。
  */
 function getVisaStyle(type) {
+    const labelCn = {
+        'Visa-Free': '免簽證',
+        'Visa-on-Arrival': '落地簽證',
+        'e-Visa': '電子簽證/eTA',
+        'Required': '須辦理簽證',
+        'Unknown': '未知'
+    }[type] || '未知';
+
     // 這裡調用 translate 函數來自動判斷應顯示中文還是英文標籤
     switch (type) {
         case 'Visa-Free':
-            return { color: 'text-blue-600', bgColor: 'bg-blue-100', borderColor: 'border-blue-500', label: translate('免簽證') };
+            return { color: 'text-blue-600', bgColor: 'bg-blue-100', borderColor: 'border-blue-500', label: translate(labelCn) };
         case 'Visa-on-Arrival':
-            return { color: 'text-teal-600', bgColor: 'bg-teal-100', borderColor: 'border-teal-500', label: translate('落地簽證') };
+            return { color: 'text-teal-600', bgColor: 'bg-teal-100', borderColor: 'border-teal-500', label: translate(labelCn) };
         case 'e-Visa':
-            return { color: 'text-purple-600', bgColor: 'bg-purple-100', borderColor: 'border-purple-500', label: translate('電子簽證/eTA') };
+            return { color: 'text-purple-600', bgColor: 'bg-purple-100', borderColor: 'border-purple-500', label: translate(labelCn) };
         case 'Required':
-            return { color: 'text-orange-600', bgColor: 'bg-orange-100', borderColor: 'border-orange-500', label: translate('須辦理簽證') };
+            return { color: 'text-orange-600', bgColor: 'bg-orange-100', borderColor: 'border-orange-500', label: translate(labelCn) };
         default:
             return { color: 'text-gray-600', bgColor: 'bg-gray-100', borderColor: 'border-gray-300', label: translate('未知') };
     }
@@ -118,12 +140,14 @@ function getVisaStyle(type) {
 
 
 function mapFilterValue(filterValue) {
-    if (filterValue === 'All' || filterValue === translate('全部簽證') || filterValue === translate('所有地區')) return 'All';
+    // 修正了 translate 函數的參數，確保匹配
+    if (filterValue === 'All' || filterValue === translate('全部簽證') || filterValue === translate('所有地區 (篩選)')) return 'All';
     
-    if (filterValue.includes('免簽證')) return 'Visa-Free'; 
-    if (filterValue.includes('落地簽證')) return 'Visa-on-Arrival';
-    if (filterValue.includes('電子簽證')) return 'e-Visa';
-    if (filterValue.includes('須辦理簽證')) return 'Required';
+    // 確保中英文字串都能被正確轉換
+    if (filterValue.includes('免簽證') || filterValue.includes('Visa-Free')) return 'Visa-Free'; 
+    if (filterValue.includes('落地簽證') || filterValue.includes('Visa-on-Arrival')) return 'Visa-on-Arrival';
+    if (filterValue.includes('電子簽證') || filterValue.includes('e-Visa')) return 'e-Visa';
+    if (filterValue.includes('須辦理簽證') || filterValue.includes('Visa Required')) return 'Required';
     
     return filterValue;
 }
@@ -147,7 +171,7 @@ function renderRegionFilter(regions) {
         if (region && region !== 'N/A') { 
             const option = document.createElement('option');
             option.value = region; 
-            // 由於地區名稱來自 API，我們直接使用 API 數據
+            // 由於地區名稱來自 API，我們直接使用 API 數據 (中文)
             option.textContent = region;
             categoryFilter.appendChild(option);
         }
@@ -156,6 +180,7 @@ function renderRegionFilter(regions) {
 
 async function fetchRegions() {
     try {
+        // 後端 /api/regions 現在回傳的是中文地區名稱陣列
         const response = await fetch(`${API_BASE_URL}/api/regions`);
         if (!response.ok) {
              throw new Error(`API response error: ${response.status}`);
@@ -176,7 +201,7 @@ async function fetchRegions() {
 }
 
 // =========================================================
-// === 主要數據載入與處理 (修正 ArrayOfData 錯誤) ===
+// === 主要數據載入與處理 (核心修正: 映射新鍵名) ===
 // =========================================================
 
 async function fetchVisaData() {
@@ -193,19 +218,23 @@ async function fetchVisaData() {
         
         const data = await response.json();
         
-        // 核心修正點：使用 Array.isArray()
+        // 確保數據是陣列
         if (!Array.isArray(data)) { 
             throw new Error('API returned incorrect data format');
         }
 
-        // 轉換數據格式
+        // 核心修正區塊：轉換數據格式，將新 API 鍵名正確映射到前端使用的鍵名
         const transformedData = data.map(country => ({
-            countryCn: country.countryNameZh || '', 
-            countryEn: country.countryNameEn || '', 
+            // 新鍵名: countryNameZh -> 舊鍵名: countryCn (中文國家名稱)
+            countryCn: country.countryNameZh || translate('未知'), 
+            countryEn: country.countryNameEn || translate('Unknown'), 
             visaType: mapVisaType(country.visaType), 
+            // 新鍵名: stayDays -> 舊鍵名: duration (停留天數)
             duration: country.stayDays || 'N/A', 
+            // 【地區修正】新鍵名: regionZh (中文地區) -> 舊鍵名: category (這是您抓取不到資料的原因)
             category: country.regionZh || translate('其他地區'), 
-            notes: country.notes || country.requirementDetail || translate('請參考官方連結') 
+            // 【備註修正】使用 notesZh (中文備註)
+            notes: country.notesZh || country.notesEn || translate('請參考官方連結') 
         }));
 
         allVisaData = transformedData; 
@@ -304,6 +333,7 @@ function filterAndSortData() {
         filteredData = filteredData.filter(country => country.visaType === visaFilterValue);
     }
     
+    // 這裡使用 country.category，而 fetchVisaData 已確保 category 映射到 regionZh，故此篩選邏輯正確
     if (categoryFilterValue !== 'All') {
         filteredData = filteredData.filter(country => country.category === categoryFilterValue);
     }
@@ -330,6 +360,7 @@ function filterAndSortData() {
 
                 const match = durationStr.match(/(\d+)/);
                 if (a.visaType === 'Required' || durationStr.includes('依核發結果') || durationStr.includes('依簽證核發')) {
+                    // 確保 Required 的國家排在最後 (Days Desc: -1, Days Asc: 9999)
                     return sortValue === 'days_desc' ? -1 : 9999; 
                 }
                 return match ? parseInt(match[1], 10) : 0;
