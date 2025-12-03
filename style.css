@@ -1,11 +1,23 @@
 /* style.css */
 /* 這是 Mobile First 樣式，主要針對小螢幕設計。 */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+/* 針對中文頁面使用 Noto Sans TC */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700;800&display=swap');
+
+/* 通用設定 */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
 
 body {
-    font-family: 'Inter', sans-serif;
+    /* 使用 Inter 作為英文預設字體 */
+    font-family: 'Inter', sans-serif; 
     background-color: #f3f4f6; /* 淺灰色背景 */
+}
+/* 針對中文頁面，在 body 加上 .lang-zh-tw 類別，使用中文字體 */
+.lang-zh-tw {
+    font-family: 'Noto Sans TC', sans-serif;
 }
 
 /* 確保所有容器在小螢幕上都是全寬 */
@@ -49,8 +61,82 @@ body {
 }
 
 /* 確保按鈕在手機上有良好的點擊區塊 */
+/* (這部分在 Tailwind 已經處理，這裡保留作為通用指示) */
 .btn {
     padding: 0.75rem 1.25rem;
     font-size: 1rem;
     font-weight: 600;
+}
+
+
+/* === [ Visited 頁面優化樣式 ] === */
+
+/* Progress Bar Transition */
+.progress-bar-fill {
+    transition: width 1s ease-in-out;
+}
+
+/* 國家列表 Checkbox 項目樣式 */
+.country-label {
+    /* 確保樣式與 Tailwind 類別一致 */
+    @apply flex items-center p-3 rounded-xl border border-gray-200 bg-white cursor-pointer transition duration-200 shadow-sm;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.country-label:hover {
+    @apply border-orange-400 bg-orange-50 shadow-md;
+}
+
+/* 隱藏原生 checkbox */
+.country-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* 可存取性 (Accessibility) 優化: 鍵盤焦點樣式 */
+/* 當 Checkbox 被 Tab 鍵選中時，為相鄰的 Label 加上清晰的焦點邊框 */
+.country-checkbox:focus-visible + .country-label {
+    outline: 2px solid #F97316; /* 橙色邊框 */
+    outline-offset: 2px;
+}
+
+/* 模仿 checkbox 的視覺元素 (Initial State) */
+.custom-checkbox {
+    @apply w-5 h-5 flex-shrink-0 mr-3 rounded-full border-2 border-gray-400 transition duration-200 flex items-center justify-center;
+}
+
+/* Checked state styling: checkbox and label background */
+.country-checkbox:checked + .country-label .custom-checkbox {
+    @apply bg-orange-500 border-orange-500;
+}
+.country-checkbox:checked + .country-label {
+    @apply border-orange-500 bg-orange-100 shadow-lg;
+}
+
+/* 載入狀態優化: 旋轉動畫 (Spinner) */
+/* 可以搭配 SVG 或 span 來顯示此動畫 */
+.loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #F97316; /* 橙色 */
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    display: inline-block; /* 確保能和文字排在一起 */
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ID 複製成功的按鈕微動態樣式 */
+.btn-success {
+    background-color: #10B981; /* Green 500 */
+    border-color: #059669; /* Green 600 */
+    transition: background-color 0.3s ease-in-out;
 }
