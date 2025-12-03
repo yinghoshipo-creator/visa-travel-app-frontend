@@ -23,18 +23,38 @@ let allVisaData = [];
 let isDataLoaded = false;
 
 /**
- * 輔助函數：將後端傳來的中文簽證類型映射為前端使用的英文類型
+ * 輔助函數：將後端傳來的中文簽證類型映射為前端使用的英文類型 (最終強化版)
  * @param {string} chineseType 後端傳來的簽證類型中文名稱
  * @returns {string} 前端使用的簽證類型英文名稱
  */
 function mapVisaType(chineseType) {
     if (!chineseType) return 'Required';
-    const type = chineseType.trim();
-    if (type.includes('免簽證')) return 'Visa-Free';
-    if (type.includes('落地簽證')) return 'Visa-on-Arrival';
-    if (type.includes('電子簽證') || type.includes('e-Visa')) return 'e-Visa';
-    return 'Required'; // 預設為須辦理簽證
+    
+    // 統一處理大小寫和空白，方便匹配
+    const type = chineseType.toLowerCase().trim();
+
+    // 1. 免簽證 (Visa-Free)
+    // 匹配包含 '免簽' 或 'visa-free' 的任何表達
+    if (type.includes('免簽') || type.includes('visa-free')) return 'Visa-Free';
+
+    // 2. 落地簽證 (Visa-on-Arrival)
+    // 匹配包含 '落地簽' 或 'voa' 的任何表達
+    if (type.includes('落地簽') || type.includes('visa-on-arrival') || type.includes('voa')) return 'Visa-on-Arrival';
+
+    // 3. 電子簽證/eTA (e-Visa)
+    // 匹配包含 '電子簽', 'e-visa' 或 'eta' 的任何表達
+    if (type.includes('電子簽') || type.includes('e-visa') || type.includes('eta')) return 'e-Visa';
+    
+    // 4. 須辦理簽證 (Required)
+    // 如果明確寫著 '須辦理' 或 '需辦理'，或者前面都沒有匹配到
+    if (type.includes('須辦理') || type.includes('需辦理')) return 'Required';
+
+    // 如果前面都沒匹配到，且包含任何非英語的 '簽證' 相關字眼 (但不包含免簽、落地簽、電子簽)
+    // 由於數據來源通常是外交部，如果它沒有明確寫免簽、落地簽、電子簽，則視為須辦理簽證是最安全的做法。
+    return 'Required'; 
 }
+
+// ... 接著是 fetchVisaData, updateCounts, filterAndSortData, renderVisaList, 以及 DOMContentLoaded
 
 /**
  * 異步抓取簽證數據的主要函數。
