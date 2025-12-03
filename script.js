@@ -1,6 +1,6 @@
 // --- 配置區 (Configuration) ---
 // **請將此處替換為您的 Zeabur 服務 API 端點**
-const API_BASE_URL = 'https://visa-travel-app.zeabur.app'; // <--- 已更新為您的 Zeabur API 網址！
+const API_BASE_URL = 'https://visa-travel-app.zeabur.app'; // <--- 您的 Zeabur API 網址
 
 /**
  * 【本地資料庫 (僅作為預覽或 API 故障的備用數據)】
@@ -26,14 +26,14 @@ let isDataLoaded = false;
 
 /**
  * 異步抓取簽證數據的主要函數。
- * **此函數已更新為呼叫您的 Zeabur API 端點。**
+ * **已修正 API 呼叫路徑和數據轉換邏輯。**
  */
 async function fetchVisaData() {
     const loadingMessage = document.getElementById('loadingMessage');
     if (loadingMessage) loadingMessage.textContent = '正在從 Zeabur 伺服器載入簽證數據...';
     
     try {
-        // *** 執行真實的 API 呼叫，假設端點是 /visa_requirements ***
+        // *** 修正 1: 將路徑從 /visa_requirements 修正為 /api/visas ***
         const response = await fetch(`${API_BASE_URL}/api/visas`);
         
         if (!response.ok) {
@@ -49,7 +49,24 @@ async function fetchVisaData() {
             throw new Error('API 返回的數據格式不正確');
         }
 
-        allVisaData = data;
+        // *** 修正 2: 轉換數據鍵名，使其與前端邏輯 (MOCK_VISA_DATA) 匹配 ***
+        const transformedData = data.map(country => ({
+            // 後端: countryNameZh -> 前端: countryCn
+            countryCn: country.countryNameZh || 'N/A', 
+            // 後端: countryNameEn -> 前端: countryEn (用於排序)
+            countryEn: country.countryNameEn || 'N/A', 
+            // 後端: visaType -> 前端: visaType (保持一致)
+            visaType: country.visaType,
+            // 後端: stayDays -> 前端: duration (用於顯示天數)
+            duration: country.stayDays || 'N/A', 
+            // 後端: region -> 前端: category (用於地區篩選)
+            category: country.region || '其他',
+            // 後端: notes 或 requirementDetail -> 前端: notes
+            notes: country.notes || country.requirementDetail || '請參考官方連結' 
+        }));
+        // =========================================================
+
+        allVisaData = transformedData; // 使用轉換後的數據
         isDataLoaded = true;
 
         if (loadingMessage) loadingMessage.classList.add('hidden');
@@ -182,6 +199,7 @@ function filterAndSortData() {
     // 5. 執行【搜尋過濾】 (Search by Name - CN or EN)
     if (searchInput) {
         filteredData = filteredData.filter(country => 
+            // 由於數據已經轉換，這裡使用 countryCn 和 countryEn
             country.countryCn.toLowerCase().includes(searchInput) || 
             country.countryEn.toLowerCase().includes(searchInput)
         );
@@ -190,6 +208,7 @@ function filterAndSortData() {
     // 6. 執行【排序】 (Sort)
     filteredData.sort((a, b) => {
         if (sortValue === 'name_asc') {
+            // 這裡 a.countryEn 現在保證有值，因為數據已被轉換
             return a.countryEn.localeCompare(b.countryEn);
         } else if (sortValue === 'days_desc' || sortValue === 'days_asc') {
             const parseDuration = (durationStr) => {
@@ -239,7 +258,6 @@ function renderVisaList(data) {
         const style = getVisaStyle(country.visaType);
         
         return `
-            <!-- 國家簽證卡片 -->
             <div class="${style.bgColor} p-5 rounded-xl shadow-md border-l-4 ${style.borderColor} transform transition duration-300 hover:shadow-xl hover:scale-[1.01]">
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="text-xl font-bold text-gray-900">${country.countryCn} <span class="text-gray-500 text-sm font-normal">(${country.countryEn})</span></h3>
