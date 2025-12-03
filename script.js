@@ -1,15 +1,18 @@
 // --- 配置區 (Configuration) ---
+// **請將此處替換為您的 Zeabur 服務 API 端點**
 const API_BASE_URL = 'https://visa-travel-app.zeabur.app'; 
 
-// 【本地資料庫 (僅作為預覽或 API 故障的備用數據)】
+// 【本地備用數據，用於 API 故障時】
 const MOCK_VISA_DATA = [
     { countryCn: '汶萊', countryEn: 'Brunei', visaType: 'Visa-Free', duration: '14天', notes: '觀光免簽。', category: '亞太地區' },
     { countryCn: '日本', countryEn: 'Japan', visaType: 'Visa-Free', duration: '90天', notes: '觀光、商務等短期停留。', category: '亞太地區' },
-    { countryCn: '美國', countryEn: 'United States of America', visaType: 'e-Visa', duration: '90天', notes: '須事先上網取得「旅行授權電子系統(ESTA)」授權許可。', category: '美洲' },
+    { countryCn: '德國', countryEn: 'Germany', visaType: 'Visa-Free', duration: '90天', notes: '申根區免簽。', category: '歐洲地區(申根區)' }, // 新增申根區範例
+    { countryCn: '英國', countryEn: 'United Kingdom', visaType: 'Visa-Free', duration: '180天', notes: '觀光免簽。', category: '歐洲地區' },
+    { countryCn: '美國', countryEn: 'United States of America', visaType: 'e-Visa', duration: '90天', notes: '須事先上網取得「旅行授權電子系統(ESTA)」授權許可。', category: '美洲地區' },
+    { countryCn: '伊朗', countryEn: 'Iran', visaType: 'Required', duration: '依簽證核發', notes: '需辦理簽證。', category: '亞西地區' }, 
 ];
-// 【本地備用地區列表】
-const MOCK_REGIONS = ['亞太地區', '歐洲地區', '美洲地區', '非洲地區', '中東地區', '其他地區'];
-
+// 【本地備用地區列表】: 確保涵蓋所有實際地區，包括帶括號的
+const MOCK_REGIONS = ['亞太地區', '歐洲地區', '歐洲地區(申根區)', '美洲地區', '亞西地區', '非洲地區', '其他地區'];
 
 let allVisaData = [];
 let isDataLoaded = false;
@@ -22,14 +25,18 @@ let isDataLoaded = false;
 function mapVisaType(chineseType) {
     if (!chineseType) return 'Required';
     const type = chineseType.toLowerCase().trim();
+
     if (type.includes('免簽')) return 'Visa-Free';
     if (type.includes('落地簽')) return 'Visa-on-Arrival';
     if (type.includes('電子簽') || type.includes('e-visa') || type.includes('eta')) return 'e-Visa';
+    if (type.includes('須辦理') || type.includes('需辦理')) return 'Required';
+
+    console.warn(`[mapVisaType 警告] 未匹配到的簽證類型: "${chineseType}". 預設為 'Required'。`);
     return 'Required'; 
 }
 
 function mapFilterValue(filterValue) {
-    if (filterValue === 'All' || filterValue === '全部簽證') return 'All';
+    if (filterValue === 'All' || filterValue === '全部簽證' || filterValue === '所有地區') return 'All';
     if (filterValue.includes('免簽證')) return 'Visa-Free';
     if (filterValue.includes('落地簽證')) return 'Visa-on-Arrival';
     if (filterValue.includes('電子簽證')) return 'e-Visa';
@@ -54,38 +61,28 @@ function getVisaStyle(type) {
 
 
 // =========================================================
-// === 步驟一：動態載入地區篩選器選項 ===
+// === 動態載入地區篩選器選項 (保持穩定) ===
 // =========================================================
 
-/**
- * 渲染地區篩選器的選項
- * @param {Array<string>} regions 地區名稱的字串陣列
- */
 function renderRegionFilter(regions) {
     const categoryFilter = document.getElementById('categoryFilter');
     if (!categoryFilter) return;
 
-    // 清空現有選項 (除了預設的 "All")
-    categoryFilter.innerHTML = '<option value="All">所有地區</option>';
+    categoryFilter.innerHTML = '<option value="All">所有地區 (篩選)</option>'; 
 
-    // 排序地區名稱 (中文排序)
     regions.sort((a, b) => a.localeCompare(b, 'zh-TW'));
 
-    // 填充新的選項
     regions.forEach(region => {
-        // 確保不添加空的或不合理的地區
         if (region && region !== 'N/A') { 
             const option = document.createElement('option');
-            option.value = region;
+            // 確保 option.value 完整，包括括號
+            option.value = region; 
             option.textContent = region;
             categoryFilter.appendChild(option);
         }
     });
 }
 
-/**
- * 異步抓取地區列表的函數
- */
 async function fetchRegions() {
     try {
         const response = await fetch(`${API_BASE_URL}/api/regions`);
@@ -96,23 +93,19 @@ async function fetchRegions() {
         const regions = await response.json();
         
         if (Array.isArray(regions) && regions.length > 0) {
-            console.log("成功從 API 載入地區列表。");
             renderRegionFilter(regions);
         } else {
-            // 如果 API 回傳空列表，使用備用
-            console.warn("API 載入的地區列表為空，使用本地備用地區。");
             renderRegionFilter(MOCK_REGIONS);
         }
         
     } catch (error) {
         console.error("無法從 API 載入地區列表，使用本地備用地區。", error);
-        // API 失敗時，使用本地備用列表
         renderRegionFilter(MOCK_REGIONS);
     }
 }
 
 // =========================================================
-// === 步驟二：主要數據載入函數 (保持穩定) ===
+// === 主要數據載入與處理 (保持穩定) ===
 // =========================================================
 
 async function fetchVisaData() {
@@ -135,9 +128,10 @@ async function fetchVisaData() {
         const transformedData = data.map(country => ({
             countryCn: country.countryNameZh || '', 
             countryEn: country.countryNameEn || '', 
-            visaType: mapVisaType(country.visaType),
+            visaType: mapVisaType(country.visaType), 
             duration: country.stayDays || 'N/A', 
-            category: country.region || '其他地區',
+            // 這裡的 country.region 必須是完整名稱，例如 '歐洲地區(申根區)'
+            category: country.region || '其他地區', 
             notes: country.notes || country.requirementDetail || '請參考官方連結' 
         }));
 
@@ -223,7 +217,8 @@ function filterAndSortData() {
     const searchInput = document.getElementById('searchInput')?.value.toLowerCase() || '';
     const rawVisaFilterValue = document.getElementById('visaFilter')?.value || 'All';
     const visaFilterValue = mapFilterValue(rawVisaFilterValue); 
-    const categoryFilterValue = document.getElementById('categoryFilter')?.value || 'All';
+    const categoryFilterValue = document.getElementById('categoryFilter')?.value || 'All'; 
+
     const sortValue = document.getElementById('sortOption')?.value || 'name_asc';
 
     let filteredData = allVisaData;
@@ -233,6 +228,7 @@ function filterAndSortData() {
     }
     
     if (categoryFilterValue !== 'All') {
+        // 由於 option.value 和 country.category 都包含括號/地區字眼，這裡使用精確匹配 (===) 是正確的。
         filteredData = filteredData.filter(country => country.category === categoryFilterValue);
     }
 
@@ -243,6 +239,7 @@ function filterAndSortData() {
         );
     }
 
+    // 排序邏輯 (保持穩定)
     filteredData.sort((a, b) => {
         if (sortValue === 'name_asc') {
             const nameA = a.countryEn || '';
@@ -337,10 +334,9 @@ function renderVisaList(data) {
 
 /**
  * 【模組範圍內啟動】
- * 頁面載入完成後，執行數據抓取和事件註冊。
  */
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. 動態載入地區列表 (與簽證數據同時執行)
+    // 1. 動態載入地區列表
     fetchRegions();
     
     // 2. 執行異步簽證數據抓取
@@ -348,7 +344,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 3. 註冊事件監聽器 
     document.getElementById('searchInput')?.addEventListener('input', filterAndSortData);
-    // **注意：在動態載入完成前，這些事件可能註冊不到，但瀏覽器通常會解決這個問題。**
     document.getElementById('visaFilter')?.addEventListener('change', filterAndSortData);
     document.getElementById('categoryFilter')?.addEventListener('change', filterAndSortData);
     document.getElementById('sortOption')?.addEventListener('change', filterAndSortData);
