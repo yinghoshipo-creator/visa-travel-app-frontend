@@ -22,50 +22,62 @@ let allVisaData = [];
 // 【狀態旗標】: 確保在數據載入完成後才執行篩選操作。
 let isDataLoaded = false;
 
+// =========================================================
+// === 輔助函數：簽證類型 (處理 API 回傳的中文值) ===
+// =========================================================
 /**
- * 輔助函數：將後端傳來的中文簽證類型映射為前端使用的英文類型 (最終強化版)
+ * 輔助函數：將後端傳來的中文簽證類型映射為前端使用的英文類型。
  * @param {string} chineseType 後端傳來的簽證類型中文名稱
  * @returns {string} 前端使用的簽證類型英文名稱
  */
 function mapVisaType(chineseType) {
     if (!chineseType) return 'Required';
     
-    // 統一處理大小寫和空白，方便匹配
+    // 統一處理大小寫和空白，增加匹配成功率
     const type = chineseType.toLowerCase().trim();
 
     // 1. 免簽證 (Visa-Free)
-    // 匹配包含 '免簽' 或 'visa-free' 的任何表達
-    if (type.includes('免簽') || type.includes('visa-free')) return 'Visa-Free';
+    if (type.includes('免簽')) return 'Visa-Free';
 
     // 2. 落地簽證 (Visa-on-Arrival)
-    // 匹配包含 '落地簽' 或 'voa' 的任何表達
-    if (type.includes('落地簽') || type.includes('visa-on-arrival') || type.includes('voa')) return 'Visa-on-Arrival';
+    if (type.includes('落地簽')) return 'Visa-on-Arrival';
 
     // 3. 電子簽證/eTA (e-Visa)
-    // 匹配包含 '電子簽', 'e-visa' 或 'eta' 的任何表達
     if (type.includes('電子簽') || type.includes('e-visa') || type.includes('eta')) return 'e-Visa';
     
     // 4. 須辦理簽證 (Required)
-    // 如果明確寫著 '須辦理' 或 '需辦理'，或者前面都沒有匹配到
     if (type.includes('須辦理') || type.includes('需辦理')) return 'Required';
 
-    // 如果前面都沒匹配到，且包含任何非英語的 '簽證' 相關字眼 (但不包含免簽、落地簽、電子簽)
-    // 由於數據來源通常是外交部，如果它沒有明確寫免簽、落地簽、電子簽，則視為須辦理簽證是最安全的做法。
+    // 如果未明確指定，則預設為須辦理簽證 (最安全的做法)
     return 'Required'; 
 }
 
-// ... 接著是 fetchVisaData, updateCounts, filterAndSortData, renderVisaList, 以及 DOMContentLoaded
+// =========================================================
+// === 輔助函數：篩選值 (處理 HTML SELECT 回傳的中文值) ===
+// =========================================================
+/**
+ * 輔助函數：將前端篩選器回傳的中文值轉換為數據中使用的英文值。
+ * **這是解決篩選無效的關鍵！**
+ * @param {string} filterValue 篩選器下拉菜單回傳的值 (e.g. '免簽證')
+ * @returns {string} 數據中使用的英文值 (e.g. 'Visa-Free')
+ */
+function mapFilterValue(filterValue) {
+    if (filterValue === 'All' || filterValue === '全部簽證') return 'All';
+    if (filterValue.includes('免簽證')) return 'Visa-Free';
+    if (filterValue.includes('落地簽證')) return 'Visa-on-Arrival';
+    if (filterValue.includes('電子簽證')) return 'e-Visa';
+    if (filterValue.includes('須辦理簽證')) return 'Required';
+    return filterValue; // 對於地區篩選器，直接返回其值
+}
 
 /**
  * 異步抓取簽證數據的主要函數。
- * **已修正 API 呼叫路徑、數據轉換邏輯和中文簽證類型轉換。**
  */
 async function fetchVisaData() {
     const loadingMessage = document.getElementById('loadingMessage');
     if (loadingMessage) loadingMessage.textContent = '正在從 Zeabur 伺服器載入簽證數據...';
     
     try {
-        // 確保 API 呼叫路徑正確
         const response = await fetch(`${API_BASE_URL}/api/visas`);
         
         if (!response.ok) {
@@ -75,11 +87,10 @@ async function fetchVisaData() {
         const data = await response.json();
         
         if (!Array.isArray(data)) {
-            console.error("API 返回的數據格式不正確，預期為陣列:", data);
             throw new Error('API 返回的數據格式不正確');
         }
 
-        // *** 核心轉換邏輯：同時修正鍵名和值類型 (中文轉英文) ***
+        // *** 核心轉換邏輯：鍵名轉換 + 簽證類型中文轉英文 ***
         const transformedData = data.map(country => ({
             countryCn: country.countryNameZh || '', 
             countryEn: country.countryNameEn || '', 
@@ -102,7 +113,7 @@ async function fetchVisaData() {
         filterAndSortData();
 
     } catch (error) {
-        console.error("無法從 API 載入數據，使用本地備用數據。", error);
+        console.error(`無法從 API 載入數據: ${error.message}，使用本地備用數據。`, error);
         
         // API 載入失敗時，使用本地備用數據 (MOCK_VISA_DATA)
         allVisaData = MOCK_VISA_DATA;
@@ -121,10 +132,9 @@ async function fetchVisaData() {
 
 /**
  * 根據簽證類型獲取 Tailwind 樣式和名稱
- * @param {string} type 簽證類型 (現在保證是英文)
- * @returns {object} 包含顏色類別和中文名稱
  */
 function getVisaStyle(type) {
+    // 這裡的 type 必須是英文 (Visa-Free, Visa-on-Arrival, e-Visa, Required)
     switch (type) {
         case 'Visa-Free':
             return { color: 'text-blue-600', bgColor: 'bg-blue-50', borderColor: 'border-blue-500', label: '免簽證' };
@@ -135,20 +145,20 @@ function getVisaStyle(type) {
         case 'Required':
             return { color: 'text-red-600', bgColor: 'bg-red-50', borderColor: 'border-red-500', label: '須辦理簽證' };
         default:
+            // 這是您截圖中看到的 '未知' 狀態
             return { color: 'text-gray-600', bgColor: 'bg-gray-100', borderColor: 'border-gray-300', label: '未知' };
     }
 }
 
 /**
- * 更新頁面上的簽證統計數字 (不變)
- * @param {Array} data 完整的簽證數據
+ * 更新頁面上的簽證統計數字
  */
 function updateCounts(data) {
     const statsContainer = document.getElementById('statsContainer');
     if (!statsContainer) return;
-    
-    // 這裡的邏輯依賴於英文 type 名稱
+
     const totalCountries = data.length;
+    // 這裡的篩選現在依賴於 mapVisaType 的輸出 (英文)
     const visaFreeCount = data.filter(c => c.visaType === 'Visa-Free').length;
     const voaCount = data.filter(c => c.visaType === 'Visa-on-Arrival').length;
     const evisaCount = data.filter(c => c.visaType === 'e-Visa').length;
@@ -191,27 +201,31 @@ function updateCounts(data) {
 
 
 /**
- * 根據使用者在篩選器和搜尋框中的操作來處理數據。 (保持不變)
+ * 根據使用者在篩選器和搜尋框中的操作來處理數據。
  */
 function filterAndSortData() {
-    // 確保數據已載入才執行篩選
     if (!isDataLoaded) {
         console.warn("Data is still loading. Aborting filterAndSortData.");
         return;
     }
 
     const searchInput = document.getElementById('searchInput')?.value.toLowerCase() || '';
-    const visaFilterValue = document.getElementById('visaFilter')?.value || 'All';
+    
+    // *** 修正點：讀取篩選器值，並將其轉換為英文目標值 ***
+    const rawVisaFilterValue = document.getElementById('visaFilter')?.value || 'All';
+    const visaFilterValue = mapFilterValue(rawVisaFilterValue); // <--- 進行轉換！
+
     const categoryFilterValue = document.getElementById('categoryFilter')?.value || 'All';
     const sortValue = document.getElementById('sortOption')?.value || 'name_asc';
 
     let filteredData = allVisaData;
 
     if (visaFilterValue !== 'All') {
-        // 現在 visaType 已經被轉換為英文，這裡可以正常篩選
+        // 這裡現在使用轉換後的英文值進行精確篩選
         filteredData = filteredData.filter(country => country.visaType === visaFilterValue);
     }
     
+    // 這裡假設 categoryFilterValue 已經是正確的中文地區名稱
     if (categoryFilterValue !== 'All') {
         filteredData = filteredData.filter(country => country.category === categoryFilterValue);
     }
@@ -256,8 +270,7 @@ function filterAndSortData() {
 }
 
 /**
- * 根據給定的數據陣列渲染國家卡片 (保持不變)
- * @param {Array} data 要渲染的國家列表
+ * 根據給定的數據陣列渲染國家卡片
  */
 function renderVisaList(data) {
     const visaList = document.getElementById('visaList');
